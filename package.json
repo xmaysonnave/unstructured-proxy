@@ -1,0 +1,30 @@
+{
+  "name": "unstructured-proxy",
+  "version": "0.0.1",
+  "description": "",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "truffle-compile": "truffle compile",
+    "truffle-test": "truffle test",
+    "truffle-migrate": "truffle migrate",
+    "truffle-version": "truffle version",
+    "prettier-write": "prettier --tab-width 4 --write **/*.sol",
+    "solium": "solium -d contracts/"
+  },
+  "lint": "./node_modules/.bin/solium -d contracts --fix",
+  "coverage": "./node_modules/.bin/solidity-coverage",
+  "author": "Xavier Maysonnave",
+  "license": "MIT",
+  "devDependencies": {
+    "ethlint": "^1.2.3",
+    "prettier": "^1.16.4",
+    "prettier-plugin-solidity": "^1.0.0-alpha.18",
+    "solidity-coverage": "^0.5.11",
+    "solium": "^1.2.3",
+    "solium-plugin-security": "^0.1.1"
+  },
+  "dependencies": {}
+}
