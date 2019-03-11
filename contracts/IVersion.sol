@@ -17,25 +17,10 @@
  *
  */
 pragma solidity ^0.5.5;
-
-import "./IPet.sol";
-
-contract Pet is IPet {
-    string private constant version = "Pet.0.0.1";
-
-    string internal kind;
-
-    constructor(string memory _kind) public {
-        require(bytes(_kind).length == 0, "Missing kind.");
-        kind = _kind;
-    }
-
+/* interface */
+contract IVersion {
+    string private constant version = "IAbstractContract.0.0.1";
     function getVersion() external pure returns (string memory _version) {
         return version;
     }
-
-    function getKind() external view returns (string memory _kind) {
-        return kind;
-    }
-
 }

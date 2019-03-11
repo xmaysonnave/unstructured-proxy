@@ -1,5 +1,4 @@
 /**
- *   Copyright (c) 2018 zOS Global Limited.
  *   Copyright (c) 2019 Xavier Maysonnave.
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -18,24 +17,10 @@
  */
 pragma solidity ^0.5.5;
 
-import "./IPet.sol";
+import "../IVersion.sol";
 
-contract Pet is IPet {
-    string private constant version = "Pet.0.0.1";
-
-    string internal kind;
-
-    constructor(string memory _kind) public {
-        require(bytes(_kind).length == 0, "Missing kind.");
-        kind = _kind;
-    }
-
-    function getVersion() external pure returns (string memory _version) {
-        return version;
-    }
-
-    function getKind() external view returns (string memory _kind) {
-        return kind;
-    }
-
+/* interface */
+contract IPet is IVersion {
+    string private constant version = "IPet.0.0.1";
+    function getKind() external view returns (string memory _kind);
 }

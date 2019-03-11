@@ -18,24 +18,16 @@
  */
 pragma solidity ^0.5.5;
 
-import "./IPet.sol";
+import "./IVersion.sol";
 
-contract Pet is IPet {
-    string private constant version = "Pet.0.0.1";
+/* interface */
+contract IProxy is IVersion {
+    string private constant version = "IProxy.0.0.1";
 
-    string internal kind;
-
-    constructor(string memory _kind) public {
-        require(bytes(_kind).length == 0, "Missing kind.");
-        kind = _kind;
-    }
-
-    function getVersion() external pure returns (string memory _version) {
-        return version;
-    }
-
-    function getKind() external view returns (string memory _kind) {
-        return kind;
-    }
+    /**
+     * @dev Tells the address of the current implementation
+     * @return address of the current implementation
+     */
+    function getImplementation() public view returns (address implementation);
 
 }
