@@ -40,3 +40,6 @@ build/
 
 # IntelliJ IDE
 .idea
+
+# VS Studio Code
+*.code-workspace

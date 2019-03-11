@@ -9,9 +9,9 @@
   "scripts": {
     "truffle-compile": "truffle compile",
     "truffle-test": "truffle test",
-    "truffle-migrate": "truffle migrate",
+    "truffle-migrate": "truffle migrate --reset",
     "truffle-version": "truffle version",
-    "prettier-write": "prettier --tab-width 4 --write **/*.sol",
+    "prettier-write": "prettier --config ./.prettierrc --write **/*.sol",
     "solium": "solium -d contracts/"
   },
   "lint": "./node_modules/.bin/solium -d contracts --fix",

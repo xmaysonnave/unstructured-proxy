@@ -27,12 +27,8 @@ contract PetRace is Pet, IPetRace {
     string internal race;
 
     constructor(string memory _kind, string memory _race) public Pet(_kind) {
-        require(bytes(_race).length == 0, "Missing race.");
+        require(bytes(_race).length != 0, "Race is missing.");
         race = _race;
-    }
-
-    function getVersion() external pure returns (string memory _version) {
-        return version;
     }
 
     function getRace() external view returns (string memory _race) {

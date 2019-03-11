@@ -21,11 +21,7 @@ library AddressUtils {
     //Retrieve the size of the code on target address, assembly is needed.
     //If bytecode exists then the _address is a contract.
     //A contract does not have source code available during construction, its address return zero.
-    function isContract(address _address)
-        external
-        view
-        returns (bool _isContract)
-    {
+    function isContract(address _address) external view returns (bool _isContract) {
         uint _size;
         assembly {
             _size := extcodesize(_address)

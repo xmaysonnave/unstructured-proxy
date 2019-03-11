@@ -26,12 +26,8 @@ contract Pet is IPet {
     string internal kind;
 
     constructor(string memory _kind) public {
-        require(bytes(_kind).length == 0, "Missing kind.");
+        require(bytes(_kind).length != 0, "Kind is missing.");
         kind = _kind;
-    }
-
-    function getVersion() external pure returns (string memory _version) {
-        return version;
     }
 
     function getKind() external view returns (string memory _kind) {

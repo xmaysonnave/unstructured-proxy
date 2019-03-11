@@ -25,19 +25,14 @@ contract UnstructuredProxy is IUnstructuredProxy {
     string private constant version = "UnstructuredProxy.0.0.1";
 
     // Address storage position of the current implementation
-    bytes32 private constant implementationPosition = keccak256(
-        "org.proxy.implementation.address"
-    );
+    bytes32 private constant implementationPosition = keccak256("org.proxy.implementation.address");
 
     /**
      * @dev Set the implementation
      * @param _implementation address of the new implementation
      */
     function setImplementation(address _implementation) public {
-        require(
-            _implementation != address(0),
-            "Uninitialized address. Implementation can't be assigned."
-        );
+        require(_implementation != address(0), "Uninitialized address. Implementation can't be assigned.");
         require(
             AddressUtils.isContract(_implementation) == false,
             "Not a contract but an Externally Owned Address (EOA). Implementation can't be assigned."

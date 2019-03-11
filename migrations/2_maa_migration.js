@@ -12,13 +12,23 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-var Proxy = artifacts.require("./Proxy.sol");
-var StringUtils = artifacts.require("./StringUtils.sol");
-var userRecords = artifacts.require("./userRecords.sol");
+// Implementation
+var OwnedUnstructuredProxy = artifacts.require("./OwnedUnstructuredProxy.sol");
+// Library
+var AddressUtils = artifacts.require("./AddressUtils.sol");
+// Test Implementation
+var Pet = artifacts.require("./tests/Pet.sol");
+var PetRace = artifacts.require("./tests/PetRace.sol");
 
 module.exports = function(deployer) {
-    deployer.deploy(Proxy);
-    deployer.deploy(StringUtils);
-    deployer.link(StringUtils, userRecords);
-    deployer.deploy(userRecords);
+    // Library
+    deployer.deploy(AddressUtils);
+    // Implementation
+    deployer.link(AddressUtils, OwnedUnstructuredProxy);
+    deployer.deploy(OwnedUnstructuredProxy);
+    // Test Implementation 
+    deployer.deploy(Pet, "Dog");
+    deployer.deploy(Pet, "Cat");
+    deployer.deploy(PetRace, "Dog", "Labrador");
+    deployer.deploy(PetRace, "Cat", "Chartreux");
 };

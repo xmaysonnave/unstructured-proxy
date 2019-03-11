@@ -20,15 +20,12 @@ pragma solidity ^0.5.5;
 
 import "./IOwnedUnstructuredProxy.sol";
 import "./UnstructuredProxy.sol";
-import "./AddressUtils.sol";
 
 contract OwnedUnstructuredProxy is UnstructuredProxy, IOwnedUnstructuredProxy {
     string private constant version = "OwnedUnstructuredProxy.0.0.1";
 
     // Owner Storage position of the contract
-    bytes32 private constant proxyOwnerPosition = keccak256(
-        "org.proxy.implementation.owner"
-    );
+    bytes32 private constant proxyOwnerPosition = keccak256("org.proxy.implementation.owner");
 
     /**
     * @dev Throws if called by any account other than the owner.
@@ -49,14 +46,8 @@ contract OwnedUnstructuredProxy is UnstructuredProxy, IOwnedUnstructuredProxy {
      * @dev Allows the current owner to transfer ownership
      * @param _newOwner The address to transfer ownership to
      */
-    function setTransferProxyOwnership(address _newOwner)
-        public
-        onlyProxyOwner
-    {
-        require(
-            _newOwner != address(0),
-            "Uninitialized address. New owner can't be assigned."
-        );
+    function setTransferProxyOwnership(address _newOwner) public onlyProxyOwner {
+        require(_newOwner != address(0), "Uninitialized address. New owner can't be assigned.");
         emit ProxyOwnershipTransferred(getProxyOwner(), _newOwner);
         _setProxyOwnership(_newOwner);
     }
@@ -89,5 +80,5 @@ contract OwnedUnstructuredProxy is UnstructuredProxy, IOwnedUnstructuredProxy {
             sstore(position, _newProxyOwner)
         }
     }
-    
+
 }
