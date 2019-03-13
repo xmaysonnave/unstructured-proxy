@@ -22,19 +22,19 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, tokenOwner]) {
     });
 
     it("Only a proxy owner can set an implementation.", async () => {
-        await shouldFail.reverting(this.proxy.setImplementation(this.pet.address));
+        await shouldFail.reverting(this.proxy.setImplementation(tokenOwner));
     });
 
     it("Implementation is a contract.", async () => {
         await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
     });
 
-    it("Implementation has been successfully set.", async () => {
+    it("Implementation has been set.", async () => {
         await this.proxy.setImplementation(this.pet.address,  { from: proxyOwner });
         (await this.proxy.getImplementation()).should.equal(this.pet.address);
     });
 
-    it("Old implementation does not have a function.", async () => {
+    it("Old implementation does not have a new function.", async () => {
         await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
         const currentPet = await Pet.at(await this.proxy.getImplementation());
         try {
@@ -50,7 +50,7 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, tokenOwner]) {
         await shouldFail.reverting(this.proxy.setImplementation(this.pet.address));
     });
 
-    it("Implementation has been succesfully upgraded.", async () => {
+    it("Implementation has been upgraded.", async () => {
         await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
         const { logs } = await this.proxy.setImplementation(this.petBreed.address, { from: proxyOwner });
         expectEvent.inLogs(logs, "UpgradedImplementation", {
@@ -59,7 +59,7 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, tokenOwner]) {
         });
     });
 
-    it("New implementation does have a function.", async () => {
+    it("New implementation does have a new function.", async () => {
         await this.proxy.setImplementation(this.petBreed.address, { from: proxyOwner });
         const currentPet = await PetBreed.at(await this.proxy.getImplementation());
         await currentPet.getBreed();
