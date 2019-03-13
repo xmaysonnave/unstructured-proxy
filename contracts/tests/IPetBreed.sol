@@ -1,5 +1,4 @@
 /**
- *   Copyright (c) 2018 zOS Global Limited.
  *   Copyright (c) 2019 Xavier Maysonnave.
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -16,23 +15,12 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5;
+pragma solidity ^0.5.5 <0.6.0;
 
-import "./IPetRace.sol";
-import "./Pet.sol";
+import "./IPet.sol";
 
-contract PetRace is Pet, IPetRace {
-    string private constant version = "PetRace.0.0.1";
-
-    string internal race;
-
-    constructor(string memory _kind, string memory _race) public Pet(_kind) {
-        require(bytes(_race).length != 0, "Race is missing.");
-        race = _race;
-    }
-
-    function getRace() external view returns (string memory _race) {
-        return race;
-    }
-
+/* interface */
+contract IPetBreed is IPet {
+    string private constant version = "IPetBreed.0.0.1";
+    function getBreed() external view returns (string memory _breed);
 }

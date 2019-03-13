@@ -17,10 +17,23 @@
  */
 pragma solidity ^0.5.5 <0.6.0;
 
-import "../IVersion.sol";
+// Proxy contract for testing throws
+contract ThrowProxy {
 
-/* interface */
-contract IPet is IVersion {
-    string private constant version = "IPet.0.0.1";
-    function getKind() external view returns (string memory _kind);
+    address private target;
+    bytes private data;
+
+    constructor(address _target) public {
+        target = _target;
+    }
+
+    //prime the data using the fallback function.
+    function() external {
+        data = msg.data;
+    }
+
+    function execute() public returns (bool, bytes memory) {
+        return target.call(data);
+    } 
+
 }

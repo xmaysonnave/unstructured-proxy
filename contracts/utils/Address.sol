@@ -15,12 +15,17 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5;
+pragma solidity ^0.5.5 <0.6.0;
 
-import "./IPet.sol";
-
-/* interface */
-contract IPetRace is IPet {
-    string private constant version = "IPetRace.0.0.1";
-    function getRace() external view returns (string memory _race);
+library Address {
+    //Retrieve the size of the code on target address, assembly is needed.
+    //If bytecode exists then the _address is a contract.
+    //A contract does not have source code available during construction, its address return zero.
+    function isContract(address _address) external view returns (bool _isContract) {
+        uint256 _size;
+        assembly {
+            _size := extcodesize(_address)
+        }
+        _isContract = _size > 0;
+    }
 }
