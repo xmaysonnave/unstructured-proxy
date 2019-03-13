@@ -78,7 +78,7 @@ contract UnstructuredProxy is Proxy, IUnstructuredProxy {
             "The new implementation can't be the current implementation."
         );
         _setImplementation(_newImplementation);
-        emit Upgraded(_newImplementation);
+        emit UpgradedImplementation(currentImplementation, _newImplementation);
     }
 
 }

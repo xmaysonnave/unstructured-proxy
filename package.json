@@ -8,7 +8,7 @@
   },
   "scripts": {
     "truffle-compile": "truffle compile",
-    "truffle-test": "./scripts/test.sh --network development",
+     "truffle-test": "./scripts/test.sh --network development",
     "truffle-migrate": "truffle migrate --reset",
     "truffle-version": "truffle version",
     "prettier-write": "prettier --config ./.prettierrc --write **/*.sol",
@@ -17,7 +17,7 @@
   "lint": "./node_modules/.bin/solium -d contracts --fix",
   "coverage": "./node_modules/.bin/solidity-coverage",
   "author": "Xavier Maysonnave",
-  "license": "MIT",
+  "license": "GPL V3",
   "devDependencies": {
     "ethlint": "^1.2.3",
     "ganache-cli": "^6.4.1",

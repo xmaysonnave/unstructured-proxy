@@ -26,9 +26,10 @@ contract IUnstructuredProxy is IProxy {
 
     /**
     * @dev This event will be emitted every time the implementation gets upgraded
-    * @param _implementation representing the address of the upgraded implementation
+    * @param fromImplementation representing the address of the previous implementation
+    * @param toImplementation representing the address of the upgraded implementation
     */
-    event Upgraded(address indexed _implementation);
+    event UpgradedImplementation(address indexed fromImplementation, address indexed toImplementation);
 
     /**
      * @dev Allows the proxy owner to set the implementation
