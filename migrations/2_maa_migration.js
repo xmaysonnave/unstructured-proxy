@@ -15,10 +15,10 @@
 // Implementation
 var OwnedUnstructuredProxy = artifacts.require("./OwnedUnstructuredProxy.sol");
 // Library
-var AddressUtils = artifacts.require("./AddressUtils.sol");
+var AddressUtils = artifacts.require("./utils/Address.sol");
 // Test Implementation
 var Pet = artifacts.require("./tests/Pet.sol");
-var PetRace = artifacts.require("./tests/PetRace.sol");
+var PetBreed = artifacts.require("./tests/PetBreed.sol");
 
 module.exports = function(deployer) {
     // Library
@@ -29,6 +29,6 @@ module.exports = function(deployer) {
     // Test Implementation 
     deployer.deploy(Pet, "Dog");
     deployer.deploy(Pet, "Cat");
-    deployer.deploy(PetRace, "Dog", "Labrador");
-    deployer.deploy(PetRace, "Cat", "Chartreux");
+    deployer.deploy(PetBreed, "Dog", "Labrador");
+    deployer.deploy(PetBreed, "Cat", "Chartreux");
 };

@@ -16,7 +16,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5;
+pragma solidity ^0.5.5 <0.6.0;
 
 import "./IUnstructuredProxy.sol";
 
@@ -26,10 +26,10 @@ contract IOwnedUnstructuredProxy is IUnstructuredProxy {
 
     /**
      * @dev Event to show ownership has been transferred
-     * @param previousOwner representing the address of the previous owner
-     * @param newOwner representing the address of the new owner
+     * @param _previousOwner representing the address of the previous owner
+     * @param _newOwner representing the address of the new owner
      */
-    event ProxyOwnershipTransferred(address previousOwner, address newOwner);
+    event ProxyOwnershipTransferred(address _previousOwner, address _newOwner);
 
     /**
      * @dev Allows the current owner to transfer ownership
@@ -41,7 +41,7 @@ contract IOwnedUnstructuredProxy is IUnstructuredProxy {
      * @dev Tells the address of the owner
      * @return the address of the owner
      */
-    function getProxyOwner() public view returns (address owner);
+    function getProxyOwner() public view returns (address _owner);
 
     /**
      * @dev Sets the address of the owner

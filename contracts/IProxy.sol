@@ -16,7 +16,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5;
+pragma solidity ^0.5.5 <0.6.0;
 
 import "./IVersion.sol";
 
@@ -28,6 +28,6 @@ contract IProxy is IVersion {
      * @dev Tells the address of the current implementation
      * @return address of the current implementation
      */
-    function getImplementation() public view returns (address implementation);
+    function getImplementation() public view returns (address _implementation);
 
 }

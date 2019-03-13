@@ -16,7 +16,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5;
+pragma solidity ^0.5.5 <0.6.0;
 
 import "./IProxy.sol";
 
@@ -31,6 +31,6 @@ contract Proxy is IProxy {
      *  @dev Tells the address of the implementation where every call will be delegated.
      *  @return address of the implementation to which it will be delegated
      */
-    function getImplementation() public view returns (address);
+    function getImplementation() public view returns (address _implementation);
 
 }

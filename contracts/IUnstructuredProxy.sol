@@ -16,7 +16,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5;
+pragma solidity ^0.5.5 <0.6.0;
 
 import "./IProxy.sol";
 
@@ -26,9 +26,9 @@ contract IUnstructuredProxy is IProxy {
 
     /**
     * @dev This event will be emitted every time the implementation gets upgraded
-    * @param implementation representing the address of the upgraded implementation
+    * @param _implementation representing the address of the upgraded implementation
     */
-    event Upgraded(address indexed implementation);
+    event Upgraded(address indexed _implementation);
 
     /**
      * @dev Allows the proxy owner to set the implementation

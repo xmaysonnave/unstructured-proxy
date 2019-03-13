@@ -16,11 +16,11 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5;
+pragma solidity ^0.5.5 <0.6.0;
 /* interface */
 contract IVersion {
-    string private constant version = "IAbstractContract.0.0.1";
+    string private constant version = "IVersion.0.0.1";
     function getVersion() external pure returns (string memory _version) {
-        return version;
+        _version = version;
     }
 }

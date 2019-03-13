@@ -8,7 +8,7 @@
   },
   "scripts": {
     "truffle-compile": "truffle compile",
-    "truffle-test": "truffle test",
+    "truffle-test": "./scripts/test.sh --network development",
     "truffle-migrate": "truffle migrate --reset",
     "truffle-version": "truffle version",
     "prettier-write": "prettier --config ./.prettierrc --write **/*.sol",
@@ -20,11 +20,15 @@
   "license": "MIT",
   "devDependencies": {
     "ethlint": "^1.2.3",
+    "ganache-cli": "^6.4.1",
+    "openzeppelin-solidity": "^2.1.3",
+    "openzeppelin-test-helpers": "^0.1.3",
     "prettier": "^1.16.4",
     "prettier-plugin-solidity": "^1.0.0-alpha.18",
     "solidity-coverage": "^0.5.11",
     "solium": "^1.2.3",
-    "solium-plugin-security": "^0.1.1"
+    "solium-plugin-security": "^0.1.1",
+    "truffle": "^5.0.7"
   },
   "dependencies": {}
 }

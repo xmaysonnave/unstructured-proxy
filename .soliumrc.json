@@ -12,6 +12,7 @@
             "error",
             4
         ],
-        "security/no-inline-assembly": "off"
+        "security/no-inline-assembly": "off",
+        "security/no-low-level-calls": "off"
     }
 }

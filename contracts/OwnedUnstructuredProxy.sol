@@ -16,7 +16,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5;
+pragma solidity ^0.5.5 <0.6.0;
 
 import "./IOwnedUnstructuredProxy.sol";
 import "./UnstructuredProxy.sol";
@@ -64,10 +64,10 @@ contract OwnedUnstructuredProxy is UnstructuredProxy, IOwnedUnstructuredProxy {
      * @dev Tells the address of the owner
      * @return the address of the owner
      */
-    function getProxyOwner() public view returns (address owner) {
+    function getProxyOwner() public view returns (address _owner) {
         bytes32 position = proxyOwnerPosition;
         assembly {
-            owner := sload(position)
+            _owner := sload(position)
         }
     }
 

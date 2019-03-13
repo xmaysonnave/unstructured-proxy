@@ -19,9 +19,10 @@
 pragma solidity ^0.5.5;
 
 import "./IUnstructuredProxy.sol";
-import "./AddressUtils.sol";
+import "./Proxy.sol";
+import "./utils/Address.sol";
 
-contract UnstructuredProxy is IUnstructuredProxy {
+contract UnstructuredProxy is Proxy, IUnstructuredProxy {
     string private constant version = "UnstructuredProxy.0.0.1";
 
     // Address storage position of the current implementation
@@ -34,7 +35,7 @@ contract UnstructuredProxy is IUnstructuredProxy {
     function setImplementation(address _implementation) public {
         require(_implementation != address(0), "Uninitialized address. Implementation can't be assigned.");
         require(
-            AddressUtils.isContract(_implementation) == false,
+            Address.isContract(_implementation) == true,
             "Not a contract but an Externally Owned Address (EOA). Implementation can't be assigned."
         );
         if (getImplementation() == address(0)) {
@@ -48,10 +49,10 @@ contract UnstructuredProxy is IUnstructuredProxy {
      * @dev Tells the address of the current implementation
      * @return address of the current implementation
      */
-    function getImplementation() public view returns (address implementation) {
+    function getImplementation() public view returns (address _implementation) {
         bytes32 position = implementationPosition;
         assembly {
-            implementation := sload(position)
+            _implementation := sload(position)
         }
     }
 
