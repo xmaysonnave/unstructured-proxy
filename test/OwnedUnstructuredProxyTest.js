@@ -23,7 +23,7 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, tokenOwner]) {
         await shouldFail.reverting(this.proxy.setImplementation(this.pet.address));
     });
 
-    it("Implemenation is successfully set.", async function () {
+    it("Implementation is successfully set.", async function () {
         await this.proxy.setImplementation(this.pet.address,  {from: proxyOwner});
         (await this.proxy.getImplementation()).should.equal(this.pet.address);
     });    
