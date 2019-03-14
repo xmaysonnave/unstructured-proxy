@@ -5,7 +5,7 @@ const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy");
 const Pet = artifacts.require("Pet");
 const PetBreed = artifacts.require("PetBreed");
 
-contract("OwnedUnstructuredProxy", function ([_, proxyOwner, tokenOwner]) {
+contract("OwnedUnstructuredProxy", function ([_, proxyOwner, newProxyOwner]) {
 
     beforeEach(async () => {
       this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner });
@@ -22,7 +22,7 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, tokenOwner]) {
     });
 
     it("Only a proxy owner can set an implementation.", async () => {
-        await shouldFail.reverting(this.proxy.setImplementation(tokenOwner));
+        await shouldFail.reverting(this.proxy.setImplementation(newProxyOwner));
     });
 
     it("Implementation is a contract.", async () => {
@@ -30,11 +30,13 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, tokenOwner]) {
     });
 
     it("Implementation has been set.", async () => {
-        await this.proxy.setImplementation(this.pet.address,  { from: proxyOwner });
-        (await this.proxy.getImplementation()).should.equal(this.pet.address);
-    });
+        const { logs } = await this.proxy.setImplementation(this.pet.address,  { from: proxyOwner });
+        expectEvent.inLogs(logs, "InitialImplementation", {
+            implementation : this.pet.address,
+        });
+    });    
 
-    it("Old implementation does not have a new function.", async () => {
+    it("Pet implementation does not have the function getBreed().", async () => {
         await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
         const currentPet = await Pet.at(await this.proxy.getImplementation());
         try {
@@ -59,10 +61,30 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, tokenOwner]) {
         });
     });
 
-    it("New implementation does have a new function.", async () => {
+    it("PetBreed implementation does have the function getBreed().", async () => {
         await this.proxy.setImplementation(this.petBreed.address, { from: proxyOwner });
         const currentPet = await PetBreed.at(await this.proxy.getImplementation());
-        await currentPet.getBreed();
+        try {
+            await currentPet.getBreed();
+        } catch (exception) {
+            should.fail();
+        }
     });
+
+    it("New proxy owner is an uninitialized address.", async () => {
+        await shouldFail.reverting(this.proxy.setTransferProxyOwnership(ZERO_ADDRESS));
+    });    
+
+    it("New proxy owner can't be the current proxy owner.", async () => {
+        await shouldFail.reverting(this.proxy.setTransferProxyOwnership(proxyOwner, { from: proxyOwner }));
+    });    
+
+    it("Proxy ownership has been transferred.", async () => {
+        const { logs } = await this.proxy.setTransferProxyOwnership(newProxyOwner, { from: proxyOwner });
+        expectEvent.inLogs(logs, "ProxyOwnershipTransferred", {
+            previousOwner : proxyOwner,
+            newOwner : newProxyOwner,
+        });
+    });    
 
 });

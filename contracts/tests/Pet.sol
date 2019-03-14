@@ -18,10 +18,7 @@
  */
 pragma solidity ^0.5.5 <0.6.0;
 
-import "./IPet.sol";
-
-contract Pet is IPet {
-    string private constant version = "Pet.0.0.1";
+contract Pet {
 
     string internal kind;
 

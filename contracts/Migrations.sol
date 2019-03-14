@@ -1,5 +1,4 @@
 /**
- *   Copyright (c) 2018 zOS Global Limited.
  *   Copyright (c) 2019 Xavier Maysonnave.
  *
  *   This program is free software: you can redistribute it and/or modify

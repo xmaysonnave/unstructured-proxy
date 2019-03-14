@@ -18,17 +18,14 @@
  */
 pragma solidity ^0.5.5 <0.6.0;
 
-import "./IProxy.sol";
-
 /**
  * @title Proxy
  * @dev Gives the possibility to delegate any call to a foreign implementation.
  */
-contract Proxy is IProxy {
-    string private constant version = "Proxy.0.0.1";
+contract Proxy {
 
     /**
-     *  @dev Tells the address of the implementation where every call will be delegated.
+     *  @dev Abstract Contract. Tells the address of the implementation where every call will be delegated.
      *  @return address of the implementation to which it will be delegated
      */
     function getImplementation() public view returns (address _implementation);

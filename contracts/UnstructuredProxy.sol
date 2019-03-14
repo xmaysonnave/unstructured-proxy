@@ -16,17 +16,35 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5;
+pragma solidity ^0.5.5 <0.6.0;
 
-import "./IUnstructuredProxy.sol";
 import "./Proxy.sol";
 import "./utils/Address.sol";
 
-contract UnstructuredProxy is Proxy, IUnstructuredProxy {
-    string private constant version = "UnstructuredProxy.0.0.1";
+contract UnstructuredProxy is Proxy {
 
     // Address storage position of the current implementation
     bytes32 private constant implementationPosition = keccak256("org.proxy.implementation.address");
+
+    /**
+    * @dev This event will be emitted the first time the implementation has been setup.
+    * @param implementation represents the address of the first implementation
+    */
+    event InitialImplementation(address indexed implementation);
+
+    /**
+    * @dev This event will be emitted every time the implementation gets upgraded
+    * @param fromImplementation represents the address of the previous implementation
+    * @param toImplementation represents the address of the upgraded implementation
+    */
+    event UpgradedImplementation(address indexed fromImplementation, address indexed toImplementation);    
+
+    /**
+    * @dev Abstract Contract
+    */
+    constructor() internal {
+        // Prevent instantiation
+    }
 
     /**
      * @dev Set the implementation
@@ -40,6 +58,7 @@ contract UnstructuredProxy is Proxy, IUnstructuredProxy {
         );
         if (getImplementation() == address(0)) {
             _setImplementation(_implementation);
+            emit InitialImplementation(_implementation);
         } else {
             _upgradeImplementation(_implementation);
         }
@@ -58,27 +77,27 @@ contract UnstructuredProxy is Proxy, IUnstructuredProxy {
 
     /**
      * @dev Sets the address of the current implementation
-     * @param _newImplementation address of the new implementation
+     * @param _toImplementation address of the new implementation
      */
-    function _setImplementation(address _newImplementation) internal {
+    function _setImplementation(address _toImplementation) internal {
         bytes32 position = implementationPosition;
         assembly {
-            sstore(position, _newImplementation)
+            sstore(position, _toImplementation)
         }
     }
 
     /**
      * @dev Upgrades the implementation address
-     * @param _newImplementation address of the new implementation
+     * @param _toImplementation address of the new implementation
      */
-    function _upgradeImplementation(address _newImplementation) internal {
-        address currentImplementation = getImplementation();
+    function _upgradeImplementation(address _toImplementation) internal {
+        address _fromImplementation = getImplementation();
         require(
-            currentImplementation != _newImplementation,
+            _fromImplementation != _toImplementation,
             "The new implementation can't be the current implementation."
         );
-        _setImplementation(_newImplementation);
-        emit UpgradedImplementation(currentImplementation, _newImplementation);
+        _setImplementation(_toImplementation);
+        emit UpgradedImplementation(_fromImplementation, _toImplementation);
     }
 
 }
