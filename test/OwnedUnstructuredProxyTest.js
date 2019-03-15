@@ -12,6 +12,14 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, newProxyOwner]) {
       this.pet = await Pet.new("Dog", { from: proxyOwner });
       this.petBreed = await PetBreed.new("Dog", "Labrador", { from: proxyOwner });
     });
+
+    it("ContractVersionName", async () => {
+        (await this.proxy.getVersionName()).should.be.equal("OwnedUnstructuredProxy");
+    });    
+
+    it("ContractVersionTag", async () => {
+        (await this.proxy.getVersionTag()).should.be.equal("v0.0.1");
+    });        
   
     it("Only a proxy owner can set an implementation.", async () => {
         await shouldFail.reverting(this.proxy.setImplementation(newProxyOwner));

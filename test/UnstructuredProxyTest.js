@@ -12,6 +12,14 @@ contract("UnstructuredProxy", function ([_, anyone]) {
       this.pet = await Pet.new("Dog", { from: anyone });
       this.petBreed = await PetBreed.new("Dog", "Labrador", { from: anyone });
     });
+
+    it("ContractVersionName", async () => {
+        (await this.proxy.getVersionName()).should.be.equal("UnstructuredProxy");
+    });    
+
+    it("ContractVersionTag", async () => {
+        (await this.proxy.getVersionTag()).should.be.equal("v0.0.1");
+    });    
   
     it("Implementation is an uninitialized address.", async () => {
         await shouldFail.reverting(this.proxy.setImplementation(ZERO_ADDRESS));
