@@ -8,7 +8,7 @@
   },
   "scripts": {
     "truffle-compile": "truffle compile",
-     "truffle-test": "./scripts/test.sh --network development",
+    "truffle-test": "./scripts/test.sh --network development",
     "truffle-migrate": "truffle migrate --reset",
     "truffle-version": "truffle version",
     "prettier-write": "prettier --config ./.prettierrc --write **/*.sol",

@@ -17,25 +17,32 @@
  */
 pragma solidity ^0.5.5<0.6.0;
 
-contract Migrations {
-    address public owner;
-    uint public last_completed_migration;
-
-    modifier restricted() {
-        if (msg.sender == owner) _;
+contract ContractVersion {
+    struct Version {
+        string name;
+        string tag;
     }
 
-    constructor() public {
-        owner = msg.sender;
+    constructor() internal {
+        //Prevent instantiation
     }
 
-    function setCompleted(uint completed) public restricted {
-        last_completed_migration = completed;
-    }
+    /**
+     * @dev Tells the Version of the current contract
+     * @return Version the current version
+     */
+    function getVersion() internal pure returns (Version memory _version);
 
-    function upgrade(address new_address) public restricted {
-        Migrations upgraded = Migrations(new_address);
-        upgraded.setCompleted(last_completed_migration);
-    }
+    /**
+     * @dev Tells the Version name of the current contract
+     * @return string the current version name
+     */
+    function getVersionName() public pure returns (string memory _name);
+
+    /**
+     * @dev Tells the Version tag of the current contract
+     * @return string the current version tag
+     */
+    function getVersionTag() public pure returns (string memory _tag);
 
 }

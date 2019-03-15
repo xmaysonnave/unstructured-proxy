@@ -16,18 +16,35 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5 <0.6.0;
+pragma solidity ^0.5.5<0.6.0;
+
+import "./ContractVersion.sol";
 
 /**
  * @title Proxy
- * @dev Gives the possibility to delegate any call to a foreign implementation.
+ * @dev Abstract Contract. Gives the possibility to delegate any call to a foreign implementation.
  */
-contract Proxy {
-
+contract Proxy is ContractVersion {
     /**
-     *  @dev Abstract Contract. Tells the address of the implementation where every call will be delegated.
+     *  @dev Tells the address of the implementation where every call will be delegated.
      *  @return address of the implementation to which it will be delegated
      */
     function getImplementation() public view returns (address _implementation);
+
+    /**
+     * @dev Tells the Version name of the current contract
+     * @return string the current version name
+     */
+    function getVersionName() public pure returns (string memory name) {
+        name = getVersion().name;
+    }
+
+    /**
+     * @dev Tells the Version tag of the current contract
+     * @return string the current version tag
+     */
+    function getVersionTag() public pure returns (string memory tag) {
+        tag = getVersion().tag;
+    }
 
 }

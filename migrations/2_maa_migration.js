@@ -14,6 +14,7 @@
 */
 // Implementation
 var OwnedUnstructuredProxy = artifacts.require("./OwnedUnstructuredProxy.sol");
+var UnstructuredProxy = artifacts.require("./UnstructuredProxy.sol");
 // Library
 var AddressUtils = artifacts.require("./utils/Address.sol");
 // Test Implementation
@@ -24,6 +25,8 @@ module.exports = function(deployer) {
     // Library
     deployer.deploy(AddressUtils);
     // Implementation
+    deployer.link(AddressUtils, UnstructuredProxy);
+    deployer.deploy(UnstructuredProxy);
     deployer.link(AddressUtils, OwnedUnstructuredProxy);
     deployer.deploy(OwnedUnstructuredProxy);
     // Test Implementation 

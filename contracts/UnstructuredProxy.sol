@@ -16,13 +16,12 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5 <0.6.0;
+pragma solidity ^0.5.5<0.6.0;
 
 import "./Proxy.sol";
 import "./utils/Address.sol";
 
 contract UnstructuredProxy is Proxy {
-
     // Address storage position of the current implementation
     bytes32 private constant implementationPosition = keccak256("org.proxy.implementation.address");
 
@@ -37,13 +36,10 @@ contract UnstructuredProxy is Proxy {
     * @param fromImplementation represents the address of the previous implementation
     * @param toImplementation represents the address of the upgraded implementation
     */
-    event UpgradedImplementation(address indexed fromImplementation, address indexed toImplementation);    
+    event UpgradedImplementation(address indexed fromImplementation, address indexed toImplementation);
 
-    /**
-    * @dev Abstract Contract
-    */
-    constructor() internal {
-        // Prevent instantiation
+    function getVersion() internal pure returns (Version memory _version) {
+        _version = Version({name: "UnstructuredProxy", tag: "v0.0.1"});
     }
 
     /**
@@ -77,7 +73,7 @@ contract UnstructuredProxy is Proxy {
 
     /**
      * @dev Sets the address of the current implementation
-     * @param _toImplementation address of the new implementation
+     * @param _toImplementation address of the implementation
      */
     function _setImplementation(address _toImplementation) internal {
         bytes32 position = implementationPosition;
@@ -87,8 +83,8 @@ contract UnstructuredProxy is Proxy {
     }
 
     /**
-     * @dev Upgrades the implementation address
-     * @param _toImplementation address of the new implementation
+     * @dev Upgrades the implementation
+     * @param _toImplementation address of the upgraded implementation
      */
     function _upgradeImplementation(address _toImplementation) internal {
         address _fromImplementation = getImplementation();
