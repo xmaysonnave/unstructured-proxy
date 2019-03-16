@@ -40,7 +40,7 @@ contract("StoragePosition", ([_, proxyOwner, petOwner ]) => {
         await shouldFail.reverting(web3.eth.sendTransaction({ from: petOwner, to: this.proxy.address, data: data }));
     });
 
-    it("Valu implementation storage position fallback call", async () => {
+    it("Value implementation storage position fallback call", async () => {
         const data = encodeCall("setColor", ["string"], ["Brown"])
         await web3.eth.sendTransaction({ from: petOwner, to: this.proxy.address, data: data });
     });    

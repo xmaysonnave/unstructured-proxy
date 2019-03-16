@@ -5,8 +5,7 @@
 		}
     ],
     "settings": {
-        //"solidity.compileUsingRemoteVersion" : "v0.5.5+commit.47a71e8f"
-        "solidity.compileUsingRemoteVersion" : "truffle-version",
+        "solidity.compileUsingRemoteVersion" : "v0.5.6+commit.b259423e",
         "solidity.enabledAsYouTypeCompilationErrorCheck": true,
         "solidity.validationDelay": 1500
     }
