@@ -15,11 +15,13 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+const { shouldFail } = require('openzeppelin-test-helpers');
+
 const encodeCall = require("./helpers/encodeCall")
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy")
 const Pet = artifacts.require("Pet")
 
-contract("Storage", ([_, proxyOwner, petOwner ]) => {
+contract("StoragePosition", ([_, proxyOwner, petOwner ]) => {
 
     beforeEach(async () => {
         this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner })
@@ -27,15 +29,20 @@ contract("Storage", ([_, proxyOwner, petOwner ]) => {
         await this.proxy.setImplementation(this.pet.address, { from: proxyOwner })
     });
 
-    it("Check position", async () => {
+    it("Implementation storage position", async () => {
         const position = web3.utils.sha3("org.maatech.proxy.implementation.address");
         const storage = await web3.eth.getStorageAt(this.proxy.address, position);
         assert.equal(web3.utils.toChecksumAddress(storage), web3.utils.toChecksumAddress(this.pet.address));
     });
 
-    it("Low level call", async () => {
-        const initializeData = encodeCall("setColor", ["string"], ["Brown"])
-        await proxy.lowLevelCall(initializeData, { from: proxyOwner })
+    it("Value implementation storage position fallback call is mandatory", async () => {
+        const data = encodeCall("setColor", ["string"], [""])
+        await shouldFail.reverting(web3.eth.sendTransaction({ from: petOwner, to: this.proxy.address, data: data }));
     });
+
+    it("Valu implementation storage position fallback call", async () => {
+        const data = encodeCall("setColor", ["string"], ["Brown"])
+        await web3.eth.sendTransaction({ from: petOwner, to: this.proxy.address, data: data });
+    });    
 
 });
