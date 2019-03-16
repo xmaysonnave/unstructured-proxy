@@ -25,11 +25,6 @@ import "./ContractVersion.sol";
  * @dev Abstract Contract. Gives the possibility to delegate any call to a foreign implementation.
  */
 contract Proxy is ContractVersion {
-    /**
-     *  @dev Tells the address of the implementation where every call will be delegated.
-     *  @return address of the implementation to which it will be delegated
-     */
-    function getImplementation() public view returns (address _implementation);
 
     /**
      * @dev Tells the Version name of the current contract
@@ -45,6 +40,37 @@ contract Proxy is ContractVersion {
      */
     function getVersionTag() public pure returns (string memory tag) {
         tag = getVersion().tag;
+    }
+
+    /**
+     *  @dev Tells the address of the implementation where every call will be delegated.
+     *  @return address of the implementation to which it will be delegated
+     */
+    function getImplementation() public view returns (address _implementation);    
+
+    /**
+     * @dev Fallback function allowing to perform a delegatecall to the given implementation.
+     * This function will return whatever the implementation call returns
+     */
+    function() external payable {
+        address _implementation = getImplementation();
+        require(_implementation != address(0), "Uninitialized address. New owner can't be assigned.");
+
+        assembly {
+            let pointer := mload(0x40)
+            calldatacopy(pointer, 0, calldatasize)
+            let result := delegatecall(gas, _implementation, pointer, calldatasize, 0, 0)
+            let size := returndatasize
+            returndatacopy(pointer, 0, size)
+
+            switch result
+                case 0 {
+                    revert(pointer, size)
+                }
+                default {
+                    return(pointer, size)
+                }
+        }
     }
 
 }

@@ -5,12 +5,12 @@ const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy");
 const Pet = artifacts.require("Pet");
 const PetBreed = artifacts.require("PetBreed");
 
-contract("OwnedUnstructuredProxy", function ([_, proxyOwner, newProxyOwner]) {
+contract("OwnedUnstructuredProxy", function ([_, proxyOwner, newProxyOwner, petOwner]) {
 
     beforeEach(async () => {
       this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner });
-      this.pet = await Pet.new("Dog", { from: proxyOwner });
-      this.petBreed = await PetBreed.new("Dog", "Labrador", { from: proxyOwner });
+      this.pet = await Pet.new("Dog", { from: petOwner });
+      this.petBreed = await PetBreed.new("Dog", "Labrador", { from: petOwner });
     });
 
     it("ContractVersionName", async () => {
@@ -22,11 +22,11 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, newProxyOwner]) {
     });        
   
     it("Only a proxy owner can set an implementation.", async () => {
-        await shouldFail.reverting(this.proxy.setImplementation(newProxyOwner));
+        await shouldFail.reverting(this.proxy.setImplementation(newProxyOwner, { from: proxyOwner }));
     });
 
     it("New proxy owner is an uninitialized address.", async () => {
-        await shouldFail.reverting(this.proxy.setTransferProxyOwnership(ZERO_ADDRESS));
+        await shouldFail.reverting(this.proxy.setTransferProxyOwnership(ZERO_ADDRESS, { from: proxyOwner }));
     });    
 
     it("New proxy owner can't be the current proxy owner.", async () => {

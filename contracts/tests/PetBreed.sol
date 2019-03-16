@@ -22,15 +22,15 @@ import "./Pet.sol";
 
 contract PetBreed is Pet {
 
-    string internal breed;
+    string internal _breed;
 
-    constructor(string memory _kind, string memory _breed) public Pet(_kind) {
-        require(bytes(_breed).length != 0, "Breed is missing.");
-        breed = _breed;
+    constructor(string memory kind, string memory breed) public Pet(kind) {
+        require(bytes(breed).length != 0, "Breed is missing.");
+        _breed = breed;
     }
 
-    function getBreed() external view returns (string memory _breed) {
-        return breed;
+    function getBreed() external view returns (string memory breed) {
+        breed = _breed;
     }
 
 }

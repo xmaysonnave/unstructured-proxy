@@ -29,7 +29,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
     event ProxyOwnershipTransferred(address previousOwner, address newOwner);
 
     // Owner Storage position of the contract
-    bytes32 private constant proxyOwnerPosition = keccak256("org.proxy.implementation.owner");
+    bytes32 private constant proxyOwnerPosition = keccak256("org.maatech.proxy.implementation.owner");
 
     function getVersion() internal pure returns (Version memory _version) {
         _version = Version({name: "OwnedUnstructuredProxy", tag: "v0.0.1"});

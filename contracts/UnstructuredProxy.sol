@@ -23,7 +23,7 @@ import "./utils/Address.sol";
 
 contract UnstructuredProxy is Proxy {
     // Address storage position of the current implementation
-    bytes32 private constant implementationPosition = keccak256("org.proxy.implementation.address");
+    bytes32 private constant implementationPosition = keccak256("org.maatech.proxy.implementation.address");
 
     /**
     * @dev This event will be emitted the first time the implementation has been setup.
@@ -95,5 +95,16 @@ contract UnstructuredProxy is Proxy {
         _setImplementation(_toImplementation);
         emit UpgradedImplementation(_fromImplementation, _toImplementation);
     }
+
+    /**
+     * @dev Allows the proxy owner to call the implementation through a low level call.
+     * @param data represents the msg.data to bet sent in the low level call. This parameter may include the function
+     * signature of the implementation to be called with the needed payload
+     */
+    function lowLevelCall(bytes memory data) public payable {
+        require(getImplementation() != address(0), "Uninitialized implementation. Unable to low level call.");
+        (bool result, ) = address(this).call(data);
+        require(result, "Low level call failure.");
+    }        
 
 }

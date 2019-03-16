@@ -34,8 +34,8 @@ start_ganache() {
     --account="0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501209,1000000000000000000000000"
   )
 
-  ganache-cli --version
-  ganache-cli --gasLimit 0xfffffffffff --port "$ganache_port" "${accounts[@]}" > /dev/null &
+  node_modules/.bin/ganache-cli --version
+  node_modules/.bin/ganache-cli --gasLimit 0xfffffffffff --port "$ganache_port" "${accounts[@]}" > /dev/null &
   ganache_pid=$!
 
   sleep 1
@@ -48,6 +48,6 @@ else
   start_ganache
 fi
 
-truffle version
+node_modules/.bin/truffle version
 
-truffle test "$@"
+node_modules/.bin/truffle test "$@"

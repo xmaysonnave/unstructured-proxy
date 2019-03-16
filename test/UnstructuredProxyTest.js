@@ -5,12 +5,12 @@ const UnstructuredProxy = artifacts.require("UnstructuredProxy");
 const Pet = artifacts.require("Pet");
 const PetBreed = artifacts.require("PetBreed");
 
-contract("UnstructuredProxy", function ([_, anyone]) {
+contract("UnstructuredProxy", function ([_, proxyOwner, petOwner]) {
 
     beforeEach(async () => {
-      this.proxy = await UnstructuredProxy.new({ from: anyone });
-      this.pet = await Pet.new("Dog", { from: anyone });
-      this.petBreed = await PetBreed.new("Dog", "Labrador", { from: anyone });
+      this.proxy = await UnstructuredProxy.new({ from: proxyOwner });
+      this.pet = await Pet.new("Dog", { from: petOwner });
+      this.petBreed = await PetBreed.new("Dog", "Labrador", { from: petOwner });
     });
 
     it("ContractVersionName", async () => {
@@ -22,32 +22,32 @@ contract("UnstructuredProxy", function ([_, anyone]) {
     });    
   
     it("Implementation is an uninitialized address.", async () => {
-        await shouldFail.reverting(this.proxy.setImplementation(ZERO_ADDRESS));
+        await shouldFail.reverting(this.proxy.setImplementation(ZERO_ADDRESS, { from: proxyOwner }));
     });
 
     it("Implementation is not a contract.", async () => {
-        await shouldFail.reverting(this.proxy.setImplementation(anyone));
+        await shouldFail.reverting(this.proxy.setImplementation(petOwner, { from: proxyOwner }));
     });
 
     it("Implementation is a contract.", async () => {
-        await this.proxy.setImplementation(this.pet.address);
+        await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
     });
 
     it("Implementation has been set.", async () => {
-        const { logs } = await this.proxy.setImplementation(this.pet.address);
+        const { logs } = await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
         expectEvent.inLogs(logs, "InitialImplementation", {
             implementation : this.pet.address,
         });
     });    
 
     it("The new implementation can't be the current implementation.", async () => {
-        await this.proxy.setImplementation(this.pet.address);
-        await shouldFail.reverting(this.proxy.setImplementation(this.pet.address));
+        await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
+        await shouldFail.reverting(this.proxy.setImplementation(this.pet.address, { from: proxyOwner }));
     });
 
     it("Implementation has been upgraded.", async () => {
-        await this.proxy.setImplementation(this.pet.address);
-        const { logs } = await this.proxy.setImplementation(this.petBreed.address);
+        await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
+        const { logs } = await this.proxy.setImplementation(this.petBreed.address, { from: proxyOwner });
         expectEvent.inLogs(logs, "UpgradedImplementation", {
             fromImplementation : this.pet.address,
             toImplementation: this.petBreed.address,
