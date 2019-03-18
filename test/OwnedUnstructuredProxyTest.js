@@ -10,7 +10,7 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, newProxyOwner, petO
     beforeEach(async () => {
       this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner });
       this.pet = await Pet.new("Dog", { from: petOwner });
-      this.petBreed = await PetBreed.new("Dog", "Labrador", { from: petOwner });
+      this.petBreed = await PetBreed.new("Dog", "Labrador", { from: petOwner })
     });
 
     it("ContractVersionName", async () => {
@@ -36,8 +36,8 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, newProxyOwner, petO
     it("Proxy ownership has been transferred.", async () => {
         const { logs } = await this.proxy.setTransferProxyOwnership(newProxyOwner, { from: proxyOwner });
         expectEvent.inLogs(logs, "ProxyOwnershipTransferred", {
-            previousOwner : proxyOwner,
-            newOwner : newProxyOwner,
+            previousOwner: proxyOwner,
+            newOwner: newProxyOwner,
         });
     });    
 

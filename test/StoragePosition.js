@@ -24,25 +24,25 @@ const Pet = artifacts.require("Pet")
 contract("StoragePosition", ([_, proxyOwner, petOwner ]) => {
 
     beforeEach(async () => {
-        this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner })
-        this.pet = await Pet.new("Dog", { from: petOwner })
-        await this.proxy.setImplementation(this.pet.address, { from: proxyOwner })
+        this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner });
+        this.petImpl = await Pet.new("Dog", { from: petOwner });
+        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
     });
 
     it("Implementation storage position", async () => {
         const position = web3.utils.sha3("org.maatech.proxy.implementation.address");
         const storage = await web3.eth.getStorageAt(this.proxy.address, position);
-        assert.equal(web3.utils.toChecksumAddress(storage), web3.utils.toChecksumAddress(this.pet.address));
+        assert.equal(web3.utils.toChecksumAddress(storage), web3.utils.toChecksumAddress(this.petImpl.address));
     });
 
     it("Value implementation storage position fallback call is mandatory", async () => {
-        const data = encodeCall("setColor", ["string"], [""])
+        const data = encodeCall("setColor", ["string"], [""]);
         await shouldFail.reverting(web3.eth.sendTransaction({ from: petOwner, to: this.proxy.address, data: data }));
     });
 
     it("Value implementation storage position fallback call", async () => {
-        const data = encodeCall("setColor", ["string"], ["Brown"])
+        const data = encodeCall("setColor", ["string"], ["Brown"]);
         await web3.eth.sendTransaction({ from: petOwner, to: this.proxy.address, data: data });
-    });    
+    });
 
 });

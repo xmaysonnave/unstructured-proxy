@@ -36,7 +36,7 @@ contract("UnstructuredProxy", function ([_, proxyOwner, petOwner]) {
     it("Implementation has been set.", async () => {
         const { logs } = await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
         expectEvent.inLogs(logs, "InitialImplementation", {
-            implementation : this.pet.address,
+            implementation: this.pet.address,
         });
     });    
 
@@ -49,7 +49,7 @@ contract("UnstructuredProxy", function ([_, proxyOwner, petOwner]) {
         await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
         const { logs } = await this.proxy.setImplementation(this.petBreed.address, { from: proxyOwner });
         expectEvent.inLogs(logs, "UpgradedImplementation", {
-            fromImplementation : this.pet.address,
+            fromImplementation: this.pet.address,
             toImplementation: this.petBreed.address,
         });
     });

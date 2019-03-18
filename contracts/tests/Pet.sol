@@ -40,7 +40,7 @@ contract Pet is Ownable {
     }    
 
     function setColor(string memory color) public {
-        require(bytes(color).length != 0, "Color is missing.");        
+        require(bytes(color).length != 0, "Color is missing.");
         _color = color;
     }    
 
