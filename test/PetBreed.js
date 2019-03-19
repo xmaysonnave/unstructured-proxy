@@ -1,4 +1,4 @@
-const { constants, expectEvent } = require("openzeppelin-test-helpers");
+const { constants } = require("openzeppelin-test-helpers");
 const { ZERO_ADDRESS } = constants;
 
 const encodedMethod = require("./helpers/encodedMethod");
@@ -35,8 +35,10 @@ contract("PetBreed", function ([_, proxyOwner, petOwner, anotherPetOwner]) {
         }
     });
 
-    it("Change ownership", async () => {
+    it("Change ownership", async () => {        
         await this.proxy.setImplementation(this.petBreedImpl.address, { from: proxyOwner });
+        assert.equal(web3.utils.toChecksumAddress(ZERO_ADDRESS), web3.utils.toChecksumAddress(await this.pet.owner()));
+        assert.equal(web3.utils.toChecksumAddress(ZERO_ADDRESS), web3.utils.toChecksumAddress(await this.petBreed.owner()));
         const data = encodedMethod.call("initialize", ["address"], [anotherPetOwner]);
         await web3.eth.sendTransaction({ from: petOwner, to: this.proxy.address, data: data });
         assert.equal(web3.utils.toChecksumAddress(anotherPetOwner), web3.utils.toChecksumAddress(await this.pet.owner()));
