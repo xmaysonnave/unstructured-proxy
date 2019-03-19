@@ -18,12 +18,12 @@
  */
 pragma solidity ^0.5.5 <0.6.0;
 
-import "../../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "./Ownable.sol";
 
 contract Pet is Ownable {
 
     bool internal _initialized;
-    string internal _kind;
+    string internal _kind = "Undefined";
     string internal _color = "Undefined";
 
     constructor(string memory kind) public {
@@ -31,8 +31,19 @@ contract Pet is Ownable {
         _kind = kind;
     }
 
+    function initialize(address owner) public {
+        require(!_initialized, "Pet is already initialized.");
+        setOwner(owner);
+        _initialized = true;
+    }
+
     function getKind() public view returns (string memory kind) {
         kind = _kind;
+    }
+
+    function setKind(string memory kind) public {
+        require(bytes(kind).length != 0, "Kind is missing.");
+        _kind = kind;
     }
 
     function getColor() public view returns (string memory color) {
@@ -42,6 +53,6 @@ contract Pet is Ownable {
     function setColor(string memory color) public {
         require(bytes(color).length != 0, "Color is missing.");
         _color = color;
-    }    
+    }
 
 }

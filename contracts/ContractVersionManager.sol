@@ -1,5 +1,4 @@
 /**
- *   Copyright (c) 2018 zOS Global Limited.
  *   Copyright (c) 2019 Xavier Maysonnave.
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -16,26 +15,13 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5 <0.6.0;
+pragma solidity ^0.5.5<0.6.0;
 
-import "./Pet.sol";
+import "./ContractVersion.sol";
 
-contract PetBreed is Pet {
+contract ContractVersionManager {
+    ContractVersion.Version[] public versions;
 
-    string internal _breed = "Undefined";
-
-    constructor(string memory kind, string memory breed) public Pet(kind) {
-        require(bytes(breed).length != 0, "Breed is missing.");
-        _breed = breed;
-    }
-
-    function getBreed() external view returns (string memory breed) {
-        breed = _breed;
-    }
-
-    function setBreed(string memory breed) public {
-        require(bytes(breed).length != 0, "Breed is missing.");
-        _breed = breed;
-    }
+    mapping(uint => address) public versionToImplementation;
 
 }

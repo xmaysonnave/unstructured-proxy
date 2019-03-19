@@ -19,13 +19,13 @@
 pragma solidity ^0.5.5<0.6.0;
 
 import "./ContractVersion.sol";
+import "./ContractVersionManager.sol";
 
 /**
  * @title Proxy
  * @dev Abstract Contract. Gives the possibility to delegate any call to a foreign implementation.
  */
 contract Proxy is ContractVersion {
-
     /**
      * @dev Tells the Version name of the current contract
      * @return string the current version name
@@ -46,7 +46,7 @@ contract Proxy is ContractVersion {
      *  @dev Tells the address of the implementation where every call will be delegated.
      *  @return address of the implementation to which it will be delegated
      */
-    function getImplementation() public view returns (address _implementation);    
+    function getImplementation() public view returns (address _implementation);
 
     /**
      * @dev Fallback function allowing to perform a delegatecall to the given implementation.
@@ -54,7 +54,7 @@ contract Proxy is ContractVersion {
      */
     function() external payable {
         address _implementation = getImplementation();
-        require(_implementation != address(0), "Uninitialized address. New owner can't be assigned.");
+        require(_implementation != address(0), "Uninitialized address. Implementation cannot be called.");
 
         assembly {
             let pointer := mload(0x40)
