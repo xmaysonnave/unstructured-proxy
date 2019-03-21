@@ -28,11 +28,17 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      */
     event ProxyOwnershipTransferred(address previousOwner, address newOwner);
 
-    // Owner Storage position of the contract
-    bytes32 private constant proxyOwnerPosition = keccak256("org.maatech.proxy.implementation.owner");
+    /** 
+     *  Owner Storage position of the contract
+     */
+    bytes32 private constant _ownerposition = keccak256("org.maatech.proxy.implementation.owner");
 
-    function getVersion() internal pure returns (Version memory _version) {
-        _version = Version({name: "OwnedUnstructuredProxy", tag: "v0.0.1"});
+    function _getVersion() internal returns (Version version) {
+        version = new Version("OwnedUnstructuredProxy", "v0.0.1");
+    }
+
+    constructor () public {
+        _setProxyOwnership(msg.sender);
     }
 
     /**
@@ -43,11 +49,8 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
         _;
     }
 
-    /**
-    * @dev the constructor sets owner
-    */
-    constructor() public {
-        _setProxyOwnership(msg.sender);
+    function initialize() public onlyProxyOwner {
+        super.initialize();
     }
 
     /**
@@ -75,20 +78,14 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @return the address of the owner
      */
     function getProxyOwner() public view returns (address _owner) {
-        bytes32 position = proxyOwnerPosition;
-        assembly {
-            _owner := sload(position)
-        }
+        return _getAddress(_ownerposition);
     }
 
     /**
      * @dev Sets the address of the owner
      */
-    function _setProxyOwnership(address _newProxyOwner) internal {
-        bytes32 position = proxyOwnerPosition;
-        assembly {
-            sstore(position, _newProxyOwner)
-        }
+    function _setProxyOwnership(address _newProxyOwner) private {
+        _setAddress(_ownerposition, _newProxyOwner);
     }
 
 }

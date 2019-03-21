@@ -25,6 +25,7 @@ contract("StoragePosition", ([_, proxyOwner, petOwner, anyone ]) => {
 
     beforeEach(async () => {
         this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner });
+        await this.proxy.initialize({ from: proxyOwner });
         this.petImpl = await Pet.new("Dog", { from: petOwner });
         await this.petImpl.setColor("Blue");
         this.pet = await Pet.at(this.proxy.address);
@@ -32,7 +33,7 @@ contract("StoragePosition", ([_, proxyOwner, petOwner, anyone ]) => {
 
     it("Implementation storage position", async () => {
         await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
-        const position = web3.utils.sha3("org.maatech.proxy.implementation.address");
+        const position = web3.utils.sha3("org.maatech.proxy.implementation");
         const storage = await web3.eth.getStorageAt(this.proxy.address, position);
         assert.equal(web3.utils.toChecksumAddress(storage), web3.utils.toChecksumAddress(this.petImpl.address));
     });

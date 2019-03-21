@@ -18,12 +18,14 @@
  */
 pragma solidity ^0.5.5<0.6.0;
 
+import "./utils/AddressUtil.sol";
 import "./Proxy.sol";
-import "./utils/Address.sol";
 
 contract UnstructuredProxy is Proxy {
-    // Address storage position of the current implementation
-    bytes32 private constant implementationPosition = keccak256("org.maatech.proxy.implementation.address");
+    /** 
+     *  Address storage position of the current implementation
+     */
+    bytes32 private constant _implementationPosition = keccak256("org.maatech.proxy.implementation");
 
     /**
     * @dev This event will be emitted the first time the implementation has been setup.
@@ -38,8 +40,16 @@ contract UnstructuredProxy is Proxy {
     */
     event UpgradedImplementation(address indexed fromImplementation, address indexed toImplementation);
 
-    function getVersion() internal pure returns (Version memory _version) {
-        _version = Version({name: "UnstructuredProxy", tag: "v0.0.1"});
+    function _getVersion() internal returns (Version version) {
+        version = new Version("UnstructuredProxy", "v0.0.1");
+    }
+
+    /**
+     *  @dev Tells the address of the implementation where every call will be delegated.
+     *  @return address of the implementation to which it will be delegated
+     */
+    function _getImplementation() internal view returns (address _implementation) {
+        return _getAddress(_implementationPosition);
     }
 
     /**
@@ -49,36 +59,14 @@ contract UnstructuredProxy is Proxy {
     function setImplementation(address _implementation) public {
         require(_implementation != address(0), "Uninitialized address. Implementation can't be assigned.");
         require(
-            Address.isContract(_implementation) == true,
+            AddressUtil.isContract(_implementation) == true,
             "Not a contract but an Externally Owned Address (EOA). Implementation can't be assigned."
         );
-        if (getImplementation() == address(0)) {
-            _setImplementation(_implementation);
+        if (_getImplementation() == address(0)) {
+            _setAddress(_implementationPosition, _implementation);
             emit InitialImplementation(_implementation);
         } else {
             _upgradeImplementation(_implementation);
-        }
-    }
-
-    /**
-     * @dev Tells the address of the current implementation
-     * @return address of the current implementation
-     */
-    function getImplementation() public view returns (address _implementation) {
-        bytes32 position = implementationPosition;
-        assembly {
-            _implementation := sload(position)
-        }
-    }
-
-    /**
-     * @dev Sets the address of the current implementation
-     * @param _toImplementation address of the implementation
-     */
-    function _setImplementation(address _toImplementation) internal {
-        bytes32 position = implementationPosition;
-        assembly {
-            sstore(position, _toImplementation)
         }
     }
 
@@ -87,12 +75,12 @@ contract UnstructuredProxy is Proxy {
      * @param _toImplementation address of the upgraded implementation
      */
     function _upgradeImplementation(address _toImplementation) internal {
-        address _fromImplementation = getImplementation();
+        address _fromImplementation = _getImplementation();
         require(
             _fromImplementation != _toImplementation,
             "The new implementation can't be the current implementation."
         );
-        _setImplementation(_toImplementation);
+        _setAddress(_implementationPosition, _toImplementation);
         emit UpgradedImplementation(_fromImplementation, _toImplementation);
     }
 

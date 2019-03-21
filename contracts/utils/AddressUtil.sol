@@ -17,7 +17,7 @@
  */
 pragma solidity ^0.5.5 <0.6.0;
 
-library Address {
+library AddressUtil {
     //Retrieve the size of the code on target address, assembly is needed.
     //If bytecode exists then the _address is a contract.
     //A contract does not have source code available during construction, its address return zero.

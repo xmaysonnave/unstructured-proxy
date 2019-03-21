@@ -4,22 +4,22 @@ const { ZERO_ADDRESS } = constants;
 const UnstructuredProxy = artifacts.require("UnstructuredProxy");
 const Pet = artifacts.require("Pet");
 const PetBreed = artifacts.require("PetBreed");
+const Version = artifacts.require("Version");
 
 contract("UnstructuredProxy", function ([_, proxyOwner, petOwner]) {
 
     beforeEach(async () => {
       this.proxy = await UnstructuredProxy.new({ from: proxyOwner });
+      await this.proxy.initialize({ from: proxyOwner });
       this.pet = await Pet.new("Dog", { from: petOwner });
       this.petBreed = await PetBreed.new("Dog", "Labrador", { from: petOwner });
     });
 
-    it("ContractVersionName", async () => {
-        (await this.proxy.getVersionName()).should.be.equal("UnstructuredProxy");
-    });    
-
-    it("ContractVersionTag", async () => {
-        (await this.proxy.getVersionTag()).should.be.equal("v0.0.1");
-    });    
+    it("ContractVersion", async () => {
+        const version = await Version.at(await this.proxy.getVersion());
+        (await version.getName()).should.be.equal("UnstructuredProxy");
+        (await version.getTag()).should.be.equal("v0.0.1");
+    });
   
     it("Implementation is an uninitialized address", async () => {
         await shouldFail.reverting(this.proxy.setImplementation(ZERO_ADDRESS, { from: proxyOwner }));

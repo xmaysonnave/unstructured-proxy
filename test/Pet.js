@@ -8,6 +8,7 @@ contract("Pet", function ([_, proxyOwner, petOwner]) {
 
     beforeEach(async () => {
         this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner });
+        await this.proxy.initialize({ from: proxyOwner });
         this.petImpl = await Pet.new("Dog", { from: petOwner });
         await this.petImpl.setColor("Blue");
         this.pet = await Pet.at(this.proxy.address);

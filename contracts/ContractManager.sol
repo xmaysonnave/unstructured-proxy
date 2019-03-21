@@ -17,11 +17,16 @@
  */
 pragma solidity ^0.5.5<0.6.0;
 
-import "./ContractVersion.sol";
+import "./Proxy.sol";
+import "./Version.sol";
 
-contract ContractVersionManager {
-    ContractVersion.Version[] public versions;
+contract ContractManager {
+    Version[] public versions;
 
     mapping(uint => address) public versionToImplementation;
+
+    function _addContractVersion(Version _version) internal {
+        versions.push(_version) - 1;
+    }
 
 }

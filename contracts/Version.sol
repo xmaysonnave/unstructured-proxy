@@ -17,32 +17,29 @@
  */
 pragma solidity ^0.5.5<0.6.0;
 
-contract ContractVersion {
-    struct Version {
-        string name;
-        string tag;
+contract Version {
+    bytes32 private _id;
+    string private _name;
+    string private _tag;
+
+    constructor (string memory name, string memory tag) public {
+        require(bytes(name).length != 0, "Name is missing.");
+        require(bytes(tag).length != 0, "Tag is missing.");
+        _id = keccak256(abi.encode(name, tag));
+        _name = name;
+        _tag = tag;
     }
 
-    constructor() internal {
-        //Prevent instantiation
+    function getId() public view returns (bytes32 id) {
+        id = _id;
     }
 
-    /**
-     * @dev Tells the Version of the current contract
-     * @return Version the current version
-     */
-    function getVersion() internal pure returns (Version memory _version);
+    function getName() public view returns (string memory name) {
+        name = _name;
+    }
 
-    /**
-     * @dev Tells the Version name of the current contract
-     * @return string the current version name
-     */
-    function getVersionName() public pure returns (string memory _name);
-
-    /**
-     * @dev Tells the Version tag of the current contract
-     * @return string the current version tag
-     */
-    function getVersionTag() public pure returns (string memory _tag);
+    function getTag() public view returns (string memory tag) {
+        tag = _tag;
+    }
 
 }

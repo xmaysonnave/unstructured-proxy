@@ -18,48 +18,47 @@
  */
 pragma solidity ^0.5.5<0.6.0;
 
-import "./ContractVersion.sol";
-import "./ContractVersionManager.sol";
+import "./utils/AddressUtil.sol";
+import "./ContractManager.sol";
+import "./ProxyVersion.sol";
+import "./Version.sol";
 
 /**
  * @title Proxy
  * @dev Abstract Contract. Gives the possibility to delegate any call to a foreign implementation.
  */
-contract Proxy is ContractVersion {
-    /**
-     * @dev Tells the Version name of the current contract
-     * @return string the current version name
+contract Proxy is ProxyVersion {
+    /** 
+     *  Contract Manager position
      */
-    function getVersionName() public pure returns (string memory name) {
-        name = getVersion().name;
-    }
-
-    /**
-     * @dev Tells the Version tag of the current contract
-     * @return string the current version tag
-     */
-    function getVersionTag() public pure returns (string memory tag) {
-        tag = getVersion().tag;
-    }
+    bytes32 private constant _managerPosition = keccak256("org.maatech.proxy.implementation.manager");
 
     /**
      *  @dev Tells the address of the implementation where every call will be delegated.
      *  @return address of the implementation to which it will be delegated
      */
-    function getImplementation() public view returns (address _implementation);
+    function _getImplementation() internal view returns (address _implementation);
+
+     /**
+     * @dev Tells the address of the current version
+     * @return address of the current version
+     */
+    function getManager() public view returns (address manager) {
+        manager = _getAddress(_managerPosition);
+    }
 
     /**
      * @dev Fallback function allowing to perform a delegatecall to the given implementation.
      * This function will return whatever the implementation call returns
      */
     function() external payable {
-        address _implementation = getImplementation();
-        require(_implementation != address(0), "Uninitialized address. Implementation cannot be called.");
+        address implementation = _getImplementation();
+        require(implementation != address(0), "Uninitialized address. Implementation cannot be called.");
 
         assembly {
             let pointer := mload(0x40)
             calldatacopy(pointer, 0, calldatasize)
-            let result := delegatecall(gas, _implementation, pointer, calldatasize, 0, 0)
+            let result := delegatecall(gas, implementation, pointer, calldatasize, 0, 0)
             let size := returndatasize
             returndatacopy(pointer, 0, size)
 
