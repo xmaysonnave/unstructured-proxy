@@ -25,7 +25,7 @@ contract ProxyVersion {
      */
     bytes32 private constant _versionPosition = keccak256("org.maatech.proxy.version");
 
-    function _getVersion() internal returns (Version version); 
+    function _getVersion() internal returns (Version version);
 
     function initialize() public {
         if (getVersion() == address(0)) {
@@ -58,6 +58,8 @@ contract ProxyVersion {
      * @param _contract contract address
      */
     function _setAddress(bytes32 _position, address _contract) internal {
+        require(_position != bytes32(0), "Uninitialized position");
+        require(_contract != address(0), "Uninitialized contract");
         bytes32 position = _position;
         assembly {
             sstore(position, _contract)

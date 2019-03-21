@@ -31,13 +31,13 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
     /** 
      *  Owner Storage position of the contract
      */
-    bytes32 private constant _ownerposition = keccak256("org.maatech.proxy.implementation.owner");
+    bytes32 private constant _ownerPosition = keccak256("org.maatech.proxy.implementation.owner");
 
     function _getVersion() internal returns (Version version) {
         version = new Version("OwnedUnstructuredProxy", "v0.0.1");
     }
 
-    constructor () public {
+    constructor() public {
         _setProxyOwnership(msg.sender);
     }
 
@@ -78,14 +78,14 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @return the address of the owner
      */
     function getProxyOwner() public view returns (address _owner) {
-        return _getAddress(_ownerposition);
+        return _getAddress(_ownerPosition);
     }
 
     /**
      * @dev Sets the address of the owner
      */
     function _setProxyOwnership(address _newProxyOwner) private {
-        _setAddress(_ownerposition, _newProxyOwner);
+        _setAddress(_ownerPosition, _newProxyOwner);
     }
 
 }

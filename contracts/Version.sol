@@ -22,7 +22,7 @@ contract Version {
     string private _name;
     string private _tag;
 
-    constructor (string memory name, string memory tag) public {
+    constructor(string memory name, string memory tag) public {
         require(bytes(name).length != 0, "Name is missing.");
         require(bytes(tag).length != 0, "Tag is missing.");
         _id = keccak256(abi.encode(name, tag));

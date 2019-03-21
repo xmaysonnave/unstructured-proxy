@@ -39,7 +39,7 @@ contract Proxy is ProxyVersion {
      */
     function _getImplementation() internal view returns (address _implementation);
 
-     /**
+    /**
      * @dev Tells the address of the current version
      * @return address of the current version
      */
