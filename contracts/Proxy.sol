@@ -18,7 +18,6 @@
  */
 pragma solidity ^0.5.5<0.6.0;
 
-import "./utils/AddressUtil.sol";
 import "./ContractManager.sol";
 import "./ProxyVersion.sol";
 import "./Version.sol";

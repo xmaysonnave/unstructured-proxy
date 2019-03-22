@@ -15,20 +15,16 @@
 // Implementation
 var OwnedUnstructuredProxy = artifacts.require("./OwnedUnstructuredProxy.sol");
 var UnstructuredProxy = artifacts.require("./UnstructuredProxy.sol");
-// Library
-var AddressUtil = artifacts.require("./utils/AddressUtil.sol");
 // Test Implementation
 var Pet = artifacts.require("./tests/Pet.sol");
 var PetBreed = artifacts.require("./tests/PetBreed.sol");
+var ParityHack = artifacts.require("./tests/ParityHack.sol");
 
 module.exports = function(deployer) {
-    // Library
-    deployer.deploy(AddressUtil);
     // Implementation
-    deployer.link(AddressUtil, UnstructuredProxy);
     deployer.deploy(UnstructuredProxy);
-    deployer.link(AddressUtil, OwnedUnstructuredProxy);
     deployer.deploy(OwnedUnstructuredProxy);
+    deployer.deploy(ParityHack);
     // Test Implementation 
     deployer.deploy(Pet, "Dog");
     deployer.deploy(Pet, "Cat");

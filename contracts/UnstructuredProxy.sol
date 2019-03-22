@@ -19,7 +19,6 @@
 pragma solidity ^0.5.5<0.6.0;
 
 import "./Proxy.sol";
-import "./utils/AddressUtil.sol";
 
 contract UnstructuredProxy is Proxy {
     /** 
@@ -59,7 +58,7 @@ contract UnstructuredProxy is Proxy {
     function setImplementation(address _implementation) public {
         require(_implementation != address(0), "Uninitialized address. Implementation can't be assigned.");
         require(
-            AddressUtil.isContract(_implementation) == true,
+            isContract(_implementation) == true,
             "Not a contract but an Externally Owned Address (EOA). Contract can't be assigned."
         );        
         if (_getImplementation() == address(0)) {

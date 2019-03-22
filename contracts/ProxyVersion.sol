@@ -27,6 +27,17 @@ contract ProxyVersion {
 
     function _getVersion() internal returns (Version version);
 
+   //Retrieve the size of the code on target address, assembly is needed.
+    //If bytecode exists then the _address is a contract.
+    //A contract does not have source code available during construction, its address return zero.
+    function isContract(address _address) internal view returns (bool _isContract) {
+        uint256 _size;
+        assembly {
+            _size := extcodesize(_address)
+        }
+        _isContract = _size > 0;
+    }    
+
     function initialize() public {
         if (getVersion() == address(0)) {
             _setAddress(_versionPosition, address(_getVersion()));
