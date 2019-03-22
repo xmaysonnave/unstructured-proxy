@@ -50,7 +50,7 @@ contract ParityHack {
         _target = target;
     }
 
-    function getTarget() public returns (address target) {
+    function getTarget() public view returns (address target) {
         target = _target;
     }
 

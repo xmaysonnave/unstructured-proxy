@@ -11,6 +11,7 @@
     "truffle-test": "./scripts/test.sh --network development",
     "truffle-migrate": "truffle migrate --reset",
     "truffle-version": "truffle version",
+    "solidity-coverage": "solidity-coverage",
     "prettier-write": "prettier --config ./.prettierrc --write **/*.sol",
     "solium": "solium -d contracts/"
   },
