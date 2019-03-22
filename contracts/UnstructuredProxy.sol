@@ -19,6 +19,7 @@
 pragma solidity ^0.5.5<0.6.0;
 
 import "./Proxy.sol";
+import "./utils/AddressUtil.sol";
 
 contract UnstructuredProxy is Proxy {
     /** 
@@ -48,7 +49,7 @@ contract UnstructuredProxy is Proxy {
      *  @return address of the implementation to which it will be delegated
      */
     function _getImplementation() internal view returns (address _implementation) {
-        return _getAddress(_implementationPosition);
+        return AddressUtil.getAddress(_implementationPosition);
     }
 
     /**
@@ -58,11 +59,11 @@ contract UnstructuredProxy is Proxy {
     function setImplementation(address _implementation) public {
         require(_implementation != address(0), "Uninitialized address. Implementation can't be assigned.");
         require(
-            isContract(_implementation) == true,
+            AddressUtil.isContract(_implementation) == true,
             "Not a contract but an Externally Owned Address (EOA). Contract can't be assigned."
-        );        
+        );
         if (_getImplementation() == address(0)) {
-            _setAddress(_implementationPosition, _implementation);
+            AddressUtil.setAddress(_implementationPosition, _implementation);
             emit InitialImplementation(_implementation);
         } else {
             _upgradeImplementation(_implementation);
@@ -79,7 +80,7 @@ contract UnstructuredProxy is Proxy {
             _fromImplementation != _toImplementation,
             "The new implementation can't be the current implementation."
         );
-        _setAddress(_implementationPosition, _toImplementation);
+        AddressUtil.setAddress(_implementationPosition, _toImplementation);
         emit UpgradedImplementation(_fromImplementation, _toImplementation);
     }
 

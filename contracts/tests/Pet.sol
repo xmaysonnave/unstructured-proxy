@@ -16,12 +16,11 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5 <0.6.0;
+pragma solidity ^0.5.5<0.6.0;
 
 import "./Ownable.sol";
 
 contract Pet is Ownable {
-
     bool internal _initialized;
     string internal _kind = "Undefined";
     string internal _color = "Undefined";
@@ -31,9 +30,14 @@ contract Pet is Ownable {
         _kind = kind;
     }
 
-    function initialize(address owner) public {
+    modifier onlySelf {
+        require(msg.sender == address(this), "onlySelf");
+        _;
+    }
+
+    function initialize(address newOwner) public onlyOwner {
         require(!_initialized, "Pet is already initialized.");
-        setOwner(owner);
+        setOwner(newOwner);
         _initialized = true;
     }
 
@@ -48,7 +52,7 @@ contract Pet is Ownable {
 
     function getColor() public view returns (string memory color) {
         color = _color;
-    }    
+    }
 
     function setColor(string memory color) public {
         require(bytes(color).length != 0, "Color is missing.");

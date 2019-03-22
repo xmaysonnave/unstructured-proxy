@@ -19,6 +19,7 @@
 pragma solidity ^0.5.5<0.6.0;
 
 import "./UnstructuredProxy.sol";
+import "./utils/AddressUtil.sol";
 
 contract OwnedUnstructuredProxy is UnstructuredProxy {
     /**
@@ -78,14 +79,14 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @return the address of the owner
      */
     function getProxyOwner() public view returns (address _owner) {
-        return _getAddress(_ownerPosition);
+        return AddressUtil.getAddress(_ownerPosition);
     }
 
     /**
      * @dev Sets the address of the owner
      */
     function _setProxyOwnership(address _newProxyOwner) private {
-        _setAddress(_ownerPosition, _newProxyOwner);
+        AddressUtil.setAddress(_ownerPosition, _newProxyOwner);
     }
 
 }

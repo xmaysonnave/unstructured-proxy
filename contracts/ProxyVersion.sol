@@ -18,6 +18,7 @@
 pragma solidity ^0.5.5<0.6.0;
 
 import "./Version.sol";
+import "./utils/AddressUtil.sol";
 
 contract ProxyVersion {
     /** 
@@ -27,20 +28,9 @@ contract ProxyVersion {
 
     function _getVersion() internal returns (Version version);
 
-   //Retrieve the size of the code on target address, assembly is needed.
-    //If bytecode exists then the _address is a contract.
-    //A contract does not have source code available during construction, its address return zero.
-    function isContract(address _address) internal view returns (bool _isContract) {
-        uint256 _size;
-        assembly {
-            _size := extcodesize(_address)
-        }
-        _isContract = _size > 0;
-    }    
-
     function initialize() public {
         if (getVersion() == address(0)) {
-            _setAddress(_versionPosition, address(_getVersion()));
+            AddressUtil.setAddress(_versionPosition, address(_getVersion()));
         }
     }
 
@@ -49,32 +39,7 @@ contract ProxyVersion {
      * @return address of the current version
      */
     function getVersion() public view returns (address version) {
-        version = _getAddress(_versionPosition);
-    }
-
-    /**
-     * @dev Tells the address at the current position
-     * @return contract address
-     */
-    function _getAddress(bytes32 _position) internal view returns (address _contract) {
-        bytes32 position = _position;
-        assembly {
-            _contract := sload(position)
-        }
-    }
-
-    /**
-     * @dev Sets the address of the current implementation
-     * @param _position storage position
-     * @param _contract contract address
-     */
-    function _setAddress(bytes32 _position, address _contract) internal {
-        require(_position != bytes32(0), "Uninitialized position");
-        require(_contract != address(0), "Uninitialized contract");
-        bytes32 position = _position;
-        assembly {
-            sstore(position, _contract)
-        }
+        version = AddressUtil.getAddress(_versionPosition);
     }
 
 }

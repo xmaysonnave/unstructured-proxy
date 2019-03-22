@@ -21,6 +21,7 @@ pragma solidity ^0.5.5<0.6.0;
 import "./ContractManager.sol";
 import "./ProxyVersion.sol";
 import "./Version.sol";
+import "./utils/AddressUtil.sol";
 
 /**
  * @title Proxy
@@ -43,7 +44,7 @@ contract Proxy is ProxyVersion {
      * @return address of the current version
      */
     function getManager() public view returns (address manager) {
-        manager = _getAddress(_managerPosition);
+        manager = AddressUtil.getAddress(_managerPosition);
     }
 
     /**

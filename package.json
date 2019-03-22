@@ -12,7 +12,7 @@
     "truffle-migrate": "truffle migrate --reset",
     "truffle-version": "truffle version",
     "solidity-coverage": "solidity-coverage",
-    "prettier-write": "prettier --config ./.prettierrc --write **/*.sol",
+    "prettier-write": "prettier --config ./.prettierrc --write 'contracts/**/*.sol'",
     "solium": "solium -d contracts/"
   },
   "lint": "./node_modules/.bin/solium -d contracts --fix",

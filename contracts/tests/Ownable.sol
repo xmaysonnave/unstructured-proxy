@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.5<0.6.0;
 
 /**
  * @title Ownable
@@ -6,7 +6,6 @@ pragma solidity ^0.5.0;
  * functions, this simplifies the implementation of "user permissions".
  */
 contract Ownable {
-
     address private _owner = address(0);
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
@@ -15,7 +14,7 @@ contract Ownable {
      * @dev The Ownable constructor sets the original `owner` of the contract to the sender
      * account.
      */
-    constructor () internal {
+    constructor() internal {
         setOwner(msg.sender);
     }
 
@@ -31,7 +30,7 @@ contract Ownable {
      */
     function setOwner(address newOwner) internal {
         _transferOwnership(newOwner);
-    }    
+    }
 
     /**
      * @dev Throws if called by any account other than the owner.

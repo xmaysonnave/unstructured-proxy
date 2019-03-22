@@ -16,12 +16,11 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5 <0.6.0;
+pragma solidity ^0.5.5<0.6.0;
 
 import "./Pet.sol";
 
 contract PetBreed is Pet {
-
     string internal _breed = "Undefined";
 
     constructor(string memory kind, string memory breed) public Pet(kind) {
