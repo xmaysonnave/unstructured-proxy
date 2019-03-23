@@ -26,16 +26,18 @@ var ParityHack = artifacts.require("./tests/ParityHack.sol");
 module.exports = function(deployer) {
     // Library
     deployer.deploy(AddressUtil);
-    // Implementation
+    // Link
     deployer.link(AddressUtil, UnstructuredProxy);
-    deployer.deploy(UnstructuredProxy);
-    deployer.link(AddressUtil, OwnedUnstructuredProxy);    
-    deployer.deploy(OwnedUnstructuredProxy);
+    deployer.link(AddressUtil, OwnedUnstructuredProxy);
     deployer.link(AddressUtil, ParityHack);
+    // Link Test
+    deployer.link(AddressUtil, Pet);
+    deployer.link(AddressUtil, PetBreed);
+    // Implementation
+    deployer.deploy(UnstructuredProxy);
+    deployer.deploy(OwnedUnstructuredProxy);
     deployer.deploy(ParityHack);
-    // Test Implementation 
-    deployer.deploy(Pet, "Dog");
-    deployer.deploy(Pet, "Cat");
-    deployer.deploy(PetBreed, "Dog", "Labrador");
-    deployer.deploy(PetBreed, "Cat", "Chartreux");
+    // Test 
+    deployer.deploy(Pet);
+    deployer.deploy(PetBreed);
 };

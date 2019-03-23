@@ -16,36 +16,20 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5<0.6.0;
+pragma solidity ^0.5.5<0.7.0;
 
-import "./Ownable.sol";
+import "../ProxyOwnable.sol";
 
-contract Pet is Ownable {
-    bool internal _initialized;
-    string internal _kind = "Undefined";
-    string internal _color = "Undefined";
+contract Pet is ProxyOwnable {
 
-    constructor(string memory kind) public {
-        require(bytes(kind).length != 0, "Kind is missing.");
-        _kind = kind;
-    }
-
-    modifier onlySelf {
-        require(msg.sender == address(this), "onlySelf");
-        _;
-    }
-
-    function initialize(address newOwner) public onlyOwner {
-        require(!_initialized, "Pet is already initialized.");
-        setOwner(newOwner);
-        _initialized = true;
-    }
+    string private _kind = "Undefined";
+    string private _color = "Undefined";
 
     function getKind() public view returns (string memory kind) {
         kind = _kind;
     }
 
-    function setKind(string memory kind) public {
+    function setKind(string memory kind) public onlyOwner {
         require(bytes(kind).length != 0, "Kind is missing.");
         _kind = kind;
     }
@@ -54,7 +38,7 @@ contract Pet is Ownable {
         color = _color;
     }
 
-    function setColor(string memory color) public {
+    function setColor(string memory color) public onlyOwner {
         require(bytes(color).length != 0, "Color is missing.");
         _color = color;
     }

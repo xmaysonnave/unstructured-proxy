@@ -1,4 +1,5 @@
 /**
+ *   Copyright (c) 2018 zOS Global Limited.
  *   Copyright (c) 2019 Xavier Maysonnave.
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -17,29 +18,32 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
-contract Version {
-    bytes32 private _id;
-    string private _name;
-    string private _tag;
+import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
-    constructor(string memory name, string memory tag) public {
-        require(bytes(name).length != 0, "Name is missing.");
-        require(bytes(tag).length != 0, "Tag is missing.");
-        _id = keccak256(abi.encode(name, tag));
-        _name = name;
-        _tag = tag;
+contract ProxyOwnable is Ownable {
+
+    modifier onlyDelegated {
+        require(owner() == address(0), "onlyDelegated");
+        _;
     }
 
-    function getId() public view returns (bytes32 id) {
-        id = _id;
+   /**
+     * @dev Throws if called by any account other than itself.
+     */
+    modifier onlySelf {
+        require(isSelf(), "onlySelf");
+        _;
     }
 
-    function getName() public view returns (string memory name) {
-        name = _name;
+    function initialize(address newOwner) public onlyDelegated {
+        _transferOwnership(newOwner);
     }
 
-    function getTag() public view returns (string memory tag) {
-        tag = _tag;
+    /**
+     * @return true if `msg.sender` is itself.
+     */
+    function isSelf() public view returns (bool) {
+        return msg.sender == address(this);
     }
 
 }

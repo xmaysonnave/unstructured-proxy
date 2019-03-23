@@ -6,13 +6,12 @@ const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy");
 const Pet = artifacts.require("Pet");
 const PetBreed = artifacts.require("PetBreed");
 
-contract("PetBreed", function ([_, proxyOwner, petOwner, anotherPetOwner]) {
+contract("PetBreed", function ([_, proxyOwner, owner]) {
 
     beforeEach(async () => {
       this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner });
-      await this.proxy.initialize({ from: proxyOwner });
-      this.petImpl = await Pet.new("Dog", { from: petOwner });
-      this.petBreedImpl = await PetBreed.new("Dog", "Labrador", { from: petOwner });
+      this.petImpl = await Pet.new({ from: owner });
+      this.petBreedImpl = await PetBreed.new({ from: owner });
       this.pet = await Pet.at(this.proxy.address);
       this.petBreed = await PetBreed.at(this.proxy.address);
     });
@@ -38,19 +37,30 @@ contract("PetBreed", function ([_, proxyOwner, petOwner, anotherPetOwner]) {
 
     it("Change ownership", async () => {        
         await this.proxy.setImplementation(this.petBreedImpl.address, { from: proxyOwner });
-        assert.equal(web3.utils.toChecksumAddress(await this.petBreedImpl.owner()), web3.utils.toChecksumAddress(petOwner));
+        assert.equal(web3.utils.toChecksumAddress(await this.petBreedImpl.owner()), web3.utils.toChecksumAddress(owner));
         assert.equal(web3.utils.toChecksumAddress(ZERO_ADDRESS), web3.utils.toChecksumAddress(await this.petBreed.owner()));
-        const data = encodedMethod.call("initialize", ["address"], [anotherPetOwner]);
-        await web3.eth.sendTransaction({ from: petOwner, to: this.proxy.address, data: data });
-        assert.equal(web3.utils.toChecksumAddress(anotherPetOwner), web3.utils.toChecksumAddress(await this.pet.owner()));
-        assert.equal(web3.utils.toChecksumAddress(anotherPetOwner), web3.utils.toChecksumAddress(await this.petBreed.owner()));
+        const data = encodedMethod.call("initialize", ["address"], [proxyOwner]);
+        await web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: data });
+        assert.equal(web3.utils.toChecksumAddress(proxyOwner), web3.utils.toChecksumAddress(await this.pet.owner()));
+        assert.equal(web3.utils.toChecksumAddress(proxyOwner), web3.utils.toChecksumAddress(await this.petBreed.owner()));
     });
 
-    it("Storage alignment", async () => {
+    it("Pet Storage alignment", async () => {
         await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
-        await this.pet.setColor("Brown", { from: petOwner });
+        const data = encodedMethod.call("initialize", ["address"], [proxyOwner]);
+        await web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: data });
+        await this.petImpl.setColor("Brown", { from: owner });
+        await this.pet.setColor("Blue", { from: proxyOwner });
+        (await this.pet.getColor()).should.be.equal("Blue");
+    });
+
+    it("PetBreed Storage alignment", async () => {
         await this.proxy.setImplementation(this.petBreedImpl.address, { from: proxyOwner });
-        (await this.petBreed.getColor()).should.be.equal("Brown");
+        const data = encodedMethod.call("initialize", ["address"], [proxyOwner]);
+        await web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: data });
+        await this.petBreedImpl.setColor("Brown", { from: owner });
+        await this.pet.setColor("Blue", { from: proxyOwner });
+        (await this.petBreed.getColor()).should.be.equal("Blue");
     });
 
 });

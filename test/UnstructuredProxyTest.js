@@ -6,13 +6,12 @@ const Pet = artifacts.require("Pet");
 const PetBreed = artifacts.require("PetBreed");
 const Version = artifacts.require("Version");
 
-contract("UnstructuredProxy", function ([_, proxyOwner, petOwner]) {
+contract("UnstructuredProxy", function ([_, proxyOwner, owner]) {
 
     beforeEach(async () => {
       this.proxy = await UnstructuredProxy.new({ from: proxyOwner });
-      await this.proxy.initialize({ from: proxyOwner });
-      this.pet = await Pet.new("Dog", { from: petOwner });
-      this.petBreed = await PetBreed.new("Dog", "Labrador", { from: petOwner });
+      this.pet = await Pet.new({ from: owner });
+      this.petBreed = await PetBreed.new({ from: owner });
     });
 
     it("ContractVersion", async () => {
@@ -26,7 +25,7 @@ contract("UnstructuredProxy", function ([_, proxyOwner, petOwner]) {
     });
 
     it("Implementation is not a contract", async () => {
-        await shouldFail.reverting(this.proxy.setImplementation(petOwner, { from: proxyOwner }));
+        await shouldFail.reverting(this.proxy.setImplementation(owner, { from: proxyOwner }));
     });
 
     it("Implementation is a contract", async () => {

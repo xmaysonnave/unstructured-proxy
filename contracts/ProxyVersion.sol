@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5<0.6.0;
+pragma solidity ^0.5.5<0.7.0;
 
 import "./Version.sol";
 import "./utils/AddressUtil.sol";
@@ -28,10 +28,8 @@ contract ProxyVersion {
 
     function _getVersion() internal returns (Version version);
 
-    function initialize() public {
-        if (getVersion() == address(0)) {
-            AddressUtil.setAddress(_versionPosition, address(_getVersion()));
-        }
+    constructor() public {
+        AddressUtil.setAddress(_versionPosition, address(_getVersion()));
     }
 
     /**

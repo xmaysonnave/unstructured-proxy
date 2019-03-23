@@ -21,13 +21,11 @@ const encodedMethod = require("./helpers/encodedMethod")
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy")
 const Pet = artifacts.require("Pet")
 
-contract("StoragePosition", ([_, proxyOwner, petOwner, anyone ]) => {
+contract("StoragePosition", ([_, proxyOwner, owner]) => {
 
     beforeEach(async () => {
         this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner });
-        await this.proxy.initialize({ from: proxyOwner });
-        this.petImpl = await Pet.new("Dog", { from: petOwner });
-        await this.petImpl.setColor("Blue");
+        this.petImpl = await Pet.new({ from: owner });
         this.pet = await Pet.at(this.proxy.address);
     });
 
@@ -38,18 +36,29 @@ contract("StoragePosition", ([_, proxyOwner, petOwner, anyone ]) => {
         assert.equal(web3.utils.toChecksumAddress(storage), web3.utils.toChecksumAddress(this.petImpl.address));
     });
 
-    it("Value implementation storage position fallback call is mandatory", async () => {
+    it("Only owner implementation storage position fallback call", async () => {
         await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
-        const data = encodedMethod.call("setColor", ["string"], [""]);
-        await shouldFail.reverting(web3.eth.sendTransaction({ from: petOwner, to: this.proxy.address, data: data }));
+        const initData = encodedMethod.call("initialize", ["address"], [proxyOwner]);
+        await web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: initData });
+        const colorData = encodedMethod.call("setColor", ["string"], ["Brown"]);
+        await shouldFail.reverting(web3.eth.sendTransaction({ from: owner, to: this.proxy.address, data: colorData }));
     });
+
+    it("Mandatory Value implementation storage position fallback call", async () => {
+        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
+        const initData = encodedMethod.call("initialize", ["address"], [proxyOwner]);
+        await web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: initData });
+        const colorData = encodedMethod.call("setColor", ["string"], [""]);
+        await shouldFail.reverting(web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: colorData }));
+    });    
 
     it("Value implementation storage position fallback call", async () => {
         await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
-        const data = encodedMethod.call("setColor", ["string"], ["Brown"]);
-        await web3.eth.sendTransaction({ from: anyone, to: this.proxy.address, data: data });
-        (await this.pet.getColor()).should.be.equal("Brown");
-        (await this.petImpl.getColor()).should.be.equal("Blue");
+        const initData = encodedMethod.call("initialize", ["address"], [proxyOwner]);
+        await web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: initData });
+        const colorData = encodedMethod.call("setColor", ["string"], ["Blue"]);
+        await web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: colorData });
+        (await this.pet.getColor()).should.be.equal("Blue");
     });
 
 });

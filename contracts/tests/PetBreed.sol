@@ -16,23 +16,19 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5<0.6.0;
+pragma solidity ^0.5.5<0.7.0;
 
 import "./Pet.sol";
 
 contract PetBreed is Pet {
-    string internal _breed = "Undefined";
 
-    constructor(string memory kind, string memory breed) public Pet(kind) {
-        require(bytes(breed).length != 0, "Breed is missing.");
-        _breed = breed;
-    }
+    string internal _breed = "Undefined";
 
     function getBreed() external view returns (string memory breed) {
         breed = _breed;
     }
 
-    function setBreed(string memory breed) public {
+    function setBreed(string memory breed) public onlyOwner {
         require(bytes(breed).length != 0, "Breed is missing.");
         _breed = breed;
     }
