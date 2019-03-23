@@ -22,28 +22,13 @@ import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 contract ProxyOwnable is Ownable {
 
-    modifier onlyDelegated {
-        require(owner() == address(0), "onlyDelegated");
+    modifier onlyOnce {
+        require(owner() == address(0), "onlyOnce");
         _;
     }
 
-   /**
-     * @dev Throws if called by any account other than itself.
-     */
-    modifier onlySelf {
-        require(isSelf(), "onlySelf");
-        _;
-    }
-
-    function initialize(address newOwner) public onlyDelegated {
+    function initialize(address newOwner) external onlyOnce {
         _transferOwnership(newOwner);
-    }
-
-    /**
-     * @return true if `msg.sender` is itself.
-     */
-    function isSelf() public view returns (bool) {
-        return msg.sender == address(this);
     }
 
 }

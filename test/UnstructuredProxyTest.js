@@ -10,8 +10,8 @@ contract("UnstructuredProxy", function ([_, proxyOwner, owner]) {
 
     beforeEach(async () => {
       this.proxy = await UnstructuredProxy.new({ from: proxyOwner });
-      this.pet = await Pet.new({ from: owner });
-      this.petBreed = await PetBreed.new({ from: owner });
+      this.petImpl = await Pet.new({ from: owner });
+      this.petBreedImpl = await PetBreed.new({ from: owner });
     });
 
     it("ContractVersion", async () => {
@@ -29,27 +29,27 @@ contract("UnstructuredProxy", function ([_, proxyOwner, owner]) {
     });
 
     it("Implementation is a contract", async () => {
-        await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
+        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
     });
 
     it("Implementation has been set", async () => {
-        const { logs } = await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
+        const { logs } = await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
         expectEvent.inLogs(logs, "InitialImplementation", {
-            implementation: this.pet.address,
+            implementation: this.petImpl.address,
         });
     });    
 
     it("The new implementation can't be the current implementation", async () => {
-        await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
-        await shouldFail.reverting(this.proxy.setImplementation(this.pet.address, { from: proxyOwner }));
+        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
+        await shouldFail.reverting(this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner }));
     });
 
     it("Implementation has been upgraded", async () => {
-        await this.proxy.setImplementation(this.pet.address, { from: proxyOwner });
-        const { logs } = await this.proxy.setImplementation(this.petBreed.address, { from: proxyOwner });
+        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
+        const { logs } = await this.proxy.setImplementation(this.petBreedImpl.address, { from: proxyOwner });
         expectEvent.inLogs(logs, "UpgradedImplementation", {
-            fromImplementation: this.pet.address,
-            toImplementation: this.petBreed.address,
+            fromImplementation: this.petImpl.address,
+            toImplementation: this.petBreedImpl.address,
         });
     });
 

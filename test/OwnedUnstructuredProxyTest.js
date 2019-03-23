@@ -11,8 +11,8 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
 
     beforeEach(async () => {
         this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner });
-        this.pet = await Pet.new({ from: owner });
-        this.petBreed = await PetBreed.new({ from: owner })
+        this.petImpl = await Pet.new({ from: owner });
+        this.petBreedImpl = await PetBreed.new({ from: owner })
     });
 
     it("ContractVersion", async () => {
@@ -20,9 +20,27 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
         (await version.getName()).should.be.equal("OwnedUnstructuredProxy");
         (await version.getTag()).should.be.equal("v0.0.1");
     });
+
+    it("Implementation is an uninitialized address", async () => {
+        await shouldFail.reverting(this.proxy.setImplementation(ZERO_ADDRESS, { from: proxyOwner }));
+    });
+
+    it("Implementation is not a contract", async () => {
+        await shouldFail.reverting(this.proxy.setImplementation(owner, { from: proxyOwner }));
+    });
+
+    it("Implementation is a contract", async () => {
+        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
+    });    
   
     it("Only a proxy owner can set an implementation", async () => {
-        await shouldFail.reverting(this.proxy.setImplementation(anotherProxyOwner, { from: proxyOwner }));
+        await shouldFail.reverting(this.proxy.setImplementation(this.petImpl.address, { from: anotherProxyOwner }));
+    });
+
+    it("Implementation is initialized once", async () => {
+        this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
+        const data = encodedMethod.call("initialize", ["address"], [proxyOwner]);
+        await shouldFail.reverting(web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: data }));
     });
 
     it("New proxy owner is an uninitialized address", async () => {

@@ -54,34 +54,25 @@ contract UnstructuredProxy is Proxy {
 
     /**
      * @dev Set the implementation
-     * @param _implementation address of the new implementation
+     * @param _toImplementation address of the new implementation
      */
-    function setImplementation(address _implementation) public {
-        require(_implementation != address(0), "Uninitialized address. Implementation can't be assigned.");
+    function setImplementation(address _toImplementation) public {
+        require(_toImplementation != address(0), "Uninitialized address. Implementation can't be assigned.");
         require(
-            AddressUtil.isContract(_implementation) == true,
+            AddressUtil.isContract(_toImplementation) == true,
             "Not a contract but an Externally Owned Address (EOA). Contract can't be assigned."
         );
-        if (_getImplementation() == address(0)) {
-            AddressUtil.setAddress(_implementationPosition, _implementation);
-            emit InitialImplementation(_implementation);
-        } else {
-            _upgradeImplementation(_implementation);
-        }
-    }
-
-    /**
-     * @dev Upgrades the implementation
-     * @param _toImplementation address of the upgraded implementation
-     */
-    function _upgradeImplementation(address _toImplementation) internal {
         address _fromImplementation = _getImplementation();
-        require(
-            _fromImplementation != _toImplementation,
-            "The new implementation can't be the current implementation."
-        );
+        if (_fromImplementation == address(0)) {
+            emit InitialImplementation(_toImplementation);
+        } else {
+            require(
+                _fromImplementation != _toImplementation,
+                "The new implementation can't be the current implementation."
+            );
+            emit UpgradedImplementation(_fromImplementation, _toImplementation);
+        }
         AddressUtil.setAddress(_implementationPosition, _toImplementation);
-        emit UpgradedImplementation(_fromImplementation, _toImplementation);
     }
 
 }

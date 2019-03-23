@@ -52,13 +52,13 @@ contract Proxy is ProxyVersion {
      * This function will return whatever the implementation call returns
      */
     function() external payable {
-        address implementation = _getImplementation();
-        require(implementation != address(0), "Uninitialized address. Implementation cannot be called.");
+        address _implementation = _getImplementation();
+        require(_implementation != address(0), "Uninitialized address. Implementation cannot be called.");
 
         assembly {
             let pointer := mload(0x40)
             calldatacopy(pointer, 0, calldatasize)
-            let result := delegatecall(gas, implementation, pointer, calldatasize, 0, 0)
+            let result := delegatecall(gas, _implementation, pointer, calldatasize, 0, 0)
             let size := returndatasize
             returndatacopy(pointer, 0, size)
 
