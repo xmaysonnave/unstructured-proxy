@@ -56,18 +56,18 @@ contract Proxy is ProxyVersion {
         require(_implementation != address(0), "Uninitialized address. Implementation cannot be called.");
 
         assembly {
-            let pointer := mload(0x40)
-            calldatacopy(pointer, 0, calldatasize)
-            let result := delegatecall(gas, _implementation, pointer, calldatasize, 0, 0)
+            //let pointer := mload(0x40)
+            calldatacopy(/*pointer*/ 0, 0, calldatasize)
+            let result := delegatecall(gas, _implementation, /*pointer*/ 0, calldatasize, 0, 0)
             let size := returndatasize
-            returndatacopy(pointer, 0, size)
+            returndatacopy(/*pointer*/ 0, 0, size)
 
             switch result
                 case 0 {
-                    revert(pointer, size)
+                    revert(/*pointer*/ 0, size)
                 }
                 default {
-                    return(pointer, size)
+                    return(/*pointer*/ 0, size)
                 }
         }
     }
