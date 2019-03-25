@@ -49,7 +49,7 @@ contract UnstructuredProxy is Proxy {
      *  @return address of the implementation to which it will be delegated
      */
     function _getImplementation() internal view returns (address _implementation) {
-        return AddressUtil.getAddress(_implementationPosition);
+        return _getAddress(_implementationPosition);
     }
 
     /**
@@ -72,7 +72,7 @@ contract UnstructuredProxy is Proxy {
             );
             emit UpgradedImplementation(_fromImplementation, _toImplementation);
         }
-        AddressUtil.setAddress(_implementationPosition, _toImplementation);
+        _setAddress(_implementationPosition, _toImplementation);
     }
 
 }

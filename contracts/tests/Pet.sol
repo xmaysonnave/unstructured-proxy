@@ -21,7 +21,6 @@ pragma solidity ^0.5.5<0.7.0;
 import "../ProxyOwnable.sol";
 
 contract Pet is ProxyOwnable {
-
     string private _kind = "Undefined";
     string private _color = "Undefined";
 

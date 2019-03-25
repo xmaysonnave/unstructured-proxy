@@ -21,7 +21,6 @@ pragma solidity ^0.5.5<0.7.0;
 import "./ContractManager.sol";
 import "./ProxyVersion.sol";
 import "./Version.sol";
-import "./utils/AddressUtil.sol";
 
 /**
  * @title Proxy
@@ -44,7 +43,7 @@ contract Proxy is ProxyVersion {
      * @return address of the current version
      */
     function getManager() public view returns (address manager) {
-        manager = AddressUtil.getAddress(_managerPosition);
+        manager = _getAddress(_managerPosition);
     }
 
     /**
@@ -57,17 +56,43 @@ contract Proxy is ProxyVersion {
 
         assembly {
             //let pointer := mload(0x40)
-            calldatacopy(/*pointer*/ 0, 0, calldatasize)
-            let result := delegatecall(gas, _implementation, /*pointer*/ 0, calldatasize, 0, 0)
+            calldatacopy(
+                /*pointer*/
+                0,
+                0,
+                calldatasize
+            )
+            let result := delegatecall(
+                gas,
+                _implementation,
+                /*pointer*/
+                0,
+                calldatasize,
+                0,
+                0
+            )
             let size := returndatasize
-            returndatacopy(/*pointer*/ 0, 0, size)
+            returndatacopy(
+                /*pointer*/
+                0,
+                0,
+                size
+            )
 
             switch result
                 case 0 {
-                    revert(/*pointer*/ 0, size)
+                    revert(
+                        /*pointer*/
+                        0,
+                        size
+                    )
                 }
                 default {
-                    return(/*pointer*/ 0, size)
+                    return(
+                        /*pointer*/
+                        0,
+                        size
+                    )
                 }
         }
     }

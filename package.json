@@ -22,16 +22,19 @@
   "devDependencies": {
     "ethereumjs-abi": "^0.6.7",
     "ethlint": "^1.2.3",
-    "ganache-cli": "^6.4.1",
+    "ganache-cli": "^ganache-cli@6.4.2-beta.0",
     "openzeppelin-solidity": "^2.2",
     "openzeppelin-test-helpers": "^0.2.0",
     "prettier": "^1.16.4",
     "prettier-plugin-solidity": "^1.0.0-alpha.18",
-    "web3": "^1.0.0-beta.50",
     "solc": "^0.5.6",
     "solidity-coverage": "^0.5.11",
     "solium": "^1.2.3",
     "solium-plugin-security": "^0.1.1",
-    "truffle": "^5.0.9"
+    "truffle": "^5.0.9",
+    "web3": "^1.0.0-beta.50"
+  },
+  "dependencies": {
+    "ganache-cli": "^6.4.2-beta.0"
   }
 }

@@ -31,29 +31,15 @@ library AddressUtil {
         _isContract = _size > 0;
     }
 
-    /**
-     * @dev Tells the address at the current position
-     * @return contract address
+    /*
+     *  @dev Returns true if the function is running in the constructor
      */
-    function getAddress(bytes32 _position) public view returns (address _contract) {
-        bytes32 position = _position;
+    function isConstructor(address method) public view returns (bool result) {
+        uint256 size;
         assembly {
-            _contract := sload(position)
+            size := extcodesize(method)
         }
-    }
-
-    /**
-     * @dev Sets the address of the current implementation
-     * @param _position storage position
-     * @param _contract contract address
-     */
-    function setAddress(bytes32 _position, address _contract) public {
-        require(_position != bytes32(0), "Uninitialized position");
-        require(_contract != address(0), "Uninitialized contract");
-        bytes32 position = _position;
-        assembly {
-            sstore(position, _contract)
-        }
+        result = size == 0;
     }
 
 }

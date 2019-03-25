@@ -21,7 +21,6 @@ pragma solidity ^0.5.5<0.7.0;
 import "./Pet.sol";
 
 contract PetBreed is Pet {
-
     string internal _breed = "Undefined";
 
     function getBreed() external view returns (string memory breed) {

@@ -21,24 +21,10 @@ pragma solidity ^0.5.5<0.7.0;
 import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 contract ProxyOwnable is Ownable {
-
+    
     modifier onlyOnce {
         require(owner() == address(0), "onlyOnce");
         _;
-    }
-
-    /*
-     *  @dev Returns true if and only if the function is running in the constructor
-     */
-    function isConstructor() private view returns (bool) {
-        // extcodesize checks the size of the code stored in an address, and
-        // address returns the current address. Since the code is still not
-        // deployed when running a constructor, any checks on its code size will
-        // yield zero, making it an effective way to detect if a contract is
-        // under construction or not.
-        uint256 cs;
-        assembly { cs := extcodesize(address) }
-        return cs == 0;
     }
 
     function initialize(address newOwner) external onlyOnce {

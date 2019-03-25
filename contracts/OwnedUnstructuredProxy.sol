@@ -18,11 +18,9 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
-import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./UnstructuredProxy.sol";
 
 contract OwnedUnstructuredProxy is UnstructuredProxy {
-
     /**
      *  Proxy Owner Storage position
      */
@@ -34,13 +32,13 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @dev Throws if called by any account other than the proxy owner.
      */
     modifier onlyProxyOwner() {
-        require(isProxyOwner(), "onlyProxyOwner");
+        require(_isProxyOwner(), "onlyProxyOwner");
         _;
     }
 
     constructor() public {
         _setTransferProxyOwnership(msg.sender);
-    }    
+    }
 
     function _getVersion() internal returns (Version version) {
         version = new Version("OwnedUnstructuredProxy", "v0.0.1");
@@ -63,7 +61,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @return the address of the owner
      */
     function getProxyOwner() public view returns (address proxyOwner) {
-        proxyOwner = AddressUtil.getAddress(_proxyOwnerPosition);
+        proxyOwner = _getAddress(_proxyOwnerPosition);
     }
 
     /**
@@ -71,13 +69,13 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      */
     function setProxyOwner(address newProxyOwner) internal {
         _setTransferProxyOwnership(newProxyOwner);
-    }    
+    }
 
     /**
      * @return true if `msg.sender` is the proxy owner of the contract.
      */
-    function isProxyOwner() public view returns (bool) {
-        return msg.sender == AddressUtil.getAddress(_proxyOwnerPosition);
+    function _isProxyOwner() internal view returns (bool) {
+        return msg.sender == _getAddress(_proxyOwnerPosition);
     }
 
     /**
@@ -96,7 +94,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
         require(newProxyOwner != address(0), "Uninitialized address");
         require(newProxyOwner != getProxyOwner(), "The new proxy owner can't be the current proxy owner.");
         emit ProxyOwnershipTransferred(getProxyOwner(), newProxyOwner);
-        AddressUtil.setAddress(_proxyOwnerPosition, newProxyOwner);
-    }    
+        _setAddress(_proxyOwnerPosition, newProxyOwner);
+    }
 
 }

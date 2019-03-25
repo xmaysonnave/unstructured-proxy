@@ -18,7 +18,6 @@
 pragma solidity ^0.5.5<0.7.0;
 
 import "./Version.sol";
-import "./utils/AddressUtil.sol";
 
 contract ProxyVersion {
     /** 
@@ -29,7 +28,32 @@ contract ProxyVersion {
     function _getVersion() internal returns (Version version);
 
     constructor() public {
-        AddressUtil.setAddress(_versionPosition, address(_getVersion()));
+        _setAddress(_versionPosition, address(_getVersion()));
+    }
+
+    /**
+     * @dev Tells the address at the current position
+     * @return contract address
+     */
+    function _getAddress(bytes32 _position) internal view returns (address _contract) {
+        bytes32 position = _position;
+        assembly {
+            _contract := sload(position)
+        }
+    }
+
+    /**
+     * @dev Sets the address of the current implementation
+     * @param _position storage position
+     * @param _contract contract address
+     */
+    function _setAddress(bytes32 _position, address _contract) internal {
+        require(_position != bytes32(0), "Uninitialized position");
+        require(_contract != address(0), "Uninitialized contract");
+        bytes32 position = _position;
+        assembly {
+            sstore(position, _contract)
+        }
     }
 
     /**
@@ -37,7 +61,7 @@ contract ProxyVersion {
      * @return address of the current version
      */
     function getVersion() public view returns (address version) {
-        version = AddressUtil.getAddress(_versionPosition);
+        version = _getAddress(_versionPosition);
     }
 
 }
