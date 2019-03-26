@@ -36,8 +36,8 @@ module.exports = function(deployer) {
     // Implementation
     deployer.deploy(UnstructuredProxy);
     deployer.deploy(OwnedUnstructuredProxy);
-    deployer.deploy(ParityHack);
     // Test 
     deployer.deploy(Pet);
     deployer.deploy(PetBreed);
+    deployer.deploy(ParityHack);
 };

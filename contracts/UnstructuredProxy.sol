@@ -41,7 +41,7 @@ contract UnstructuredProxy is Proxy {
     event UpgradedImplementation(address indexed fromImplementation, address indexed toImplementation);
 
     function _getVersion() internal returns (Version version) {
-        version = new Version("UnstructuredProxy", "v0.0.1");
+        version = new Version(address(this), "UnstructuredProxy", "v0.0.1");
     }
 
     /**

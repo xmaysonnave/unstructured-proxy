@@ -18,16 +18,23 @@
 pragma solidity ^0.5.5<0.7.0;
 
 contract Version {
+    address _implementation;
     bytes32 private _id;
     string private _name;
     string private _tag;
 
-    constructor(string memory name, string memory tag) public {
-        require(bytes(name).length != 0, "Name is missing.");
-        require(bytes(tag).length != 0, "Tag is missing.");
+    constructor(address implementation, string memory name, string memory tag) public {
+        require(bytes(name).length != 0, "Mandatory implementation");
+        require(bytes(name).length != 0, "Mandatory name");
+        require(bytes(tag).length != 0, "Mandatory tag");
+        _implementation = implementation;
         _id = keccak256(abi.encode(name, tag));
         _name = name;
         _tag = tag;
+    }
+
+    function getImplementation() public view returns (address implementation) {
+        implementation = _implementation;
     }
 
     function getId() public view returns (bytes32 id) {

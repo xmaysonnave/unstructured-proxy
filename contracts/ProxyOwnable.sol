@@ -21,7 +21,7 @@ pragma solidity ^0.5.5<0.7.0;
 import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 contract ProxyOwnable is Ownable {
-    
+
     modifier onlyOnce {
         require(owner() == address(0), "onlyOnce");
         _;

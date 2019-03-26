@@ -1,6 +1,5 @@
 const { expectEvent } = require('openzeppelin-test-helpers');
 
-const encodedMethod = require("./helpers/encodedMethod");
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy");
 const Pet = artifacts.require("Pet");
 

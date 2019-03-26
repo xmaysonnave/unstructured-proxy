@@ -20,8 +20,10 @@ pragma solidity ^0.5.5<0.7.0;
 import "./Proxy.sol";
 import "./Version.sol";
 
-contract ContractManager {
-    Version[] public versions;
+contract ProxyVersionManager {
+
+    Version private current;
+    Version[] private versions;
 
     mapping(uint => address) public versionToImplementation;
 

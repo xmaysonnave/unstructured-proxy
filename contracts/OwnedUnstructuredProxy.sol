@@ -41,7 +41,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
     }
 
     function _getVersion() internal returns (Version version) {
-        version = new Version("OwnedUnstructuredProxy", "v0.0.1");
+        version = new Version(address(this), "OwnedUnstructuredProxy", "v0.0.1");
     }
 
     /**
