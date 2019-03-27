@@ -21,14 +21,13 @@ import "./Proxy.sol";
 import "./Version.sol";
 
 contract ProxyVersionManager {
-
     Version private _current;
     Version[] private _versions;
     Proxy private _proxy;
 
     mapping(uint => address) public versionToImplementation;
 
-    constructor (Proxy proxy) public {
+    constructor(Proxy proxy) public {
         _proxy = proxy;
     }
 

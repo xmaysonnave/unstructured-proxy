@@ -1,5 +1,4 @@
 /**
- *   Copyright (c) 2018 zOS Global Limited.
  *   Copyright (c) 2019 Xavier Maysonnave.
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -18,23 +17,12 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
-import "./Pet.sol";
+import "../utils/StringUtil.sol";
 
-contract PetBreed is Pet {
-    Version private _version = new Version("PetBreed", "v0.0.1");
-    string internal _breed = "Undefined";
-
-    function getVersion() public returns (Version version) {
-        version = _version;
-    }
-
-    function getBreed() external view returns (string memory breed) {
-        breed = _breed;
-    }
-
-    function setBreed(string memory breed) public onlyOwner {
-        require(bytes(breed).length != 0, "Breed is missing.");
-        _breed = breed;
+contract StringUtilMock {
+    function appendTest() public pure returns (bool result) {
+        bytes32 test = keccak256(abi.encodePacked("aabbccddee"));
+        result = test == keccak256(StringUtil.append("aa", "bb", "cc", "dd", "ee"));
     }
 
 }

@@ -22,7 +22,6 @@ import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./Version.sol";
 
 contract ProxyCallable is Ownable {
-
     modifier onlyOnce {
         require(owner() == address(0), "onlyOnce");
         _;

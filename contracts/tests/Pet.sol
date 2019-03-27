@@ -21,7 +21,6 @@ pragma solidity ^0.5.5<0.7.0;
 import "../ProxyCallable.sol";
 
 contract Pet is ProxyCallable {
-
     Version private _version = new Version("Pet", "v0.0.1");
     string private _kind = "Undefined";
     string private _color = "Undefined";

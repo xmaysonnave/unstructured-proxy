@@ -1,5 +1,4 @@
 /**
- *   Copyright (c) 2018 zOS Global Limited.
  *   Copyright (c) 2019 Xavier Maysonnave.
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -18,23 +17,24 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
-import "./Pet.sol";
+import "../../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "../utils/AddressUtil.sol";
 
-contract PetBreed is Pet {
-    Version private _version = new Version("PetBreed", "v0.0.1");
-    string internal _breed = "Undefined";
-
-    function getVersion() public returns (Version version) {
-        version = _version;
+contract AddressUtilMock is Ownable {
+    constructor() public {
+        AddressUtil.isConstructor(address(this));
     }
 
-    function getBreed() external view returns (string memory breed) {
-        breed = _breed;
+    function isContract() public view returns (bool result) {
+        result = AddressUtil.isContract(address(this));
     }
 
-    function setBreed(string memory breed) public onlyOwner {
-        require(bytes(breed).length != 0, "Breed is missing.");
-        _breed = breed;
+    function isNotContract() public view returns (bool result) {
+        result = AddressUtil.isContract(owner());
+    }
+
+    function notInConstructor() public view returns (bool result) {
+        result = AddressUtil.isConstructor(address(this));
     }
 
 }

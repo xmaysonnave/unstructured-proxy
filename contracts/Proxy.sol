@@ -26,7 +26,6 @@ import "./ProxyVersionManager.sol";
  * @dev Abstract Contract. Gives the possibility to delegate any call to a foreign implementation.
  */
 contract Proxy {
-
     /** 
      *  Proxy Version
      */
@@ -81,7 +80,7 @@ contract Proxy {
      */
     function getVersion() public view returns (address version) {
         version = _getAddress(_versionPosition);
-    }    
+    }
 
     /**
      * @dev Tells the address of the current version

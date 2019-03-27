@@ -18,13 +18,12 @@
 pragma solidity ^0.5.5<0.7.0;
 
 contract Version {
-
     bytes32 private _id;
     string private _name;
     string private _tag;
 
     constructor(string memory name, string memory tag) public {
-        require(bytes(name).length != 0, "Mandatory implementation");  
+        require(bytes(name).length != 0, "Mandatory implementation");
         require(bytes(name).length != 0, "Mandatory name");
         require(bytes(tag).length != 0, "Mandatory tag");
         _id = keccak256(abi.encode(name, tag));

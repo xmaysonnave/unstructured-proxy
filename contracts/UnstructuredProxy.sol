@@ -63,10 +63,7 @@ contract UnstructuredProxy is Proxy {
         if (_fromCallable == address(0)) {
             emit InitialProxyCallable(_toCallable);
         } else {
-            require(
-                _fromCallable != _toCallable,
-                "The new proxy callable can't be the current proxy callable."
-            );
+            require(_fromCallable != _toCallable, "The new proxy callable can't be the current proxy callable.");
             emit UpgradedProxyCallable(_fromCallable, _toCallable);
         }
         _setAddress(_proxyCallablePosition, _toCallable);

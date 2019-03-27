@@ -15,15 +15,15 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5<0.6.0;
+pragma solidity ^0.5.5<0.7.0;
 
 library StringUtil {
     function append(string memory a, string memory b, string memory c, string memory d, string memory e)
         public
         pure
-        returns (string memory concat)
+        returns (bytes memory concat)
     {
-        concat = string(abi.encodePacked(a, b, c, d, e));
+        concat = abi.encodePacked(a, b, c, d, e);
     }
 
     function stringToAddress(string memory _a) public pure returns (address _address) {
@@ -52,31 +52,6 @@ library StringUtil {
             iaddr += (b1 * 16 + b2);
         }
         _address = address(iaddr);
-    }
-
-    /**
-     * @dev Tells the address at the current position
-     * @return contract address
-     */
-    function getAddress(bytes32 _position) public view returns (address _contract) {
-        bytes32 position = _position;
-        assembly {
-            _contract := sload(position)
-        }
-    }
-
-    /**
-     * @dev Sets the address of the current implementation
-     * @param _position storage position
-     * @param _contract contract address
-     */
-    function setAddress(bytes32 _position, address _contract) public {
-        require(_position != bytes32(0), "Uninitialized position");
-        require(_contract != address(0), "Uninitialized contract");
-        bytes32 position = _position;
-        assembly {
-            sstore(position, _contract)
-        }
     }
 
 }
