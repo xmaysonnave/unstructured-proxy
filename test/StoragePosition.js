@@ -29,27 +29,27 @@ contract("StoragePosition", ([_, proxyOwner, owner]) => {
         this.pet = await Pet.at(this.proxy.address);
     });
 
-    it("Implementation storage position", async () => {
-        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
-        const position = web3.utils.sha3("org.maatech.proxy.implementation");
+    it("Proxy callable storage position", async () => {
+        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
+        const position = web3.utils.sha3("org.maatech.proxy.callable");
         const storage = await web3.eth.getStorageAt(this.proxy.address, position);
         assert.equal(web3.utils.toChecksumAddress(storage), web3.utils.toChecksumAddress(this.petImpl.address));
     });
 
-    it("Only owner implementation storage position fallback call", async () => {
-        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
+    it("Only owner proxy callable storage position fallback call", async () => {
+        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
         const data = encodedMethod.call("setColor", ["string"], ["Brown"]);
         await shouldFail.reverting(web3.eth.sendTransaction({ from: owner, to: this.proxy.address, data: data }));
     });
 
-    it("Mandatory Value implementation storage position fallback call", async () => {
-        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
+    it("Mandatory Value proxy callable storage position fallback call", async () => {
+        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
         const data = encodedMethod.call("setColor", ["string"], [""]);
         await shouldFail.reverting(web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: data }));
     });    
 
-    it("Value implementation storage position fallback call", async () => {
-        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
+    it("Value proxy callable storage position fallback call", async () => {
+        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
         const data = encodedMethod.call("setColor", ["string"], ["Blue"]);
         await web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: data });
         (await this.pet.getColor()).should.be.equal("Blue");

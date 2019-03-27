@@ -22,13 +22,22 @@ import "./Version.sol";
 
 contract ProxyVersionManager {
 
-    Version private current;
-    Version[] private versions;
+    Version private _current;
+    Version[] private _versions;
+    Proxy private _proxy;
 
     mapping(uint => address) public versionToImplementation;
 
+    constructor (Proxy proxy) public {
+        _proxy = proxy;
+    }
+
     function _addContractVersion(Version _version) internal {
-        versions.push(_version) - 1;
+        _versions.push(_version) - 1;
+    }
+
+    function getProxy() public view returns (Proxy proxy) {
+        proxy = _proxy;
     }
 
 }

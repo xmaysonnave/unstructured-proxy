@@ -11,8 +11,8 @@ contract("Pet", function ([_, proxyOwner, owner]) {
         this.pet = await Pet.at(this.proxy.address);
     });
 
-    it("Pet implementation does not have the function getBreed()", async () => {
-        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
+    it("Pet does not have the function getBreed()", async () => {
+        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
         try {
              await pet.getBreed();
         } catch (exception) {

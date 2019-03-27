@@ -20,36 +20,32 @@ contract("UnstructuredProxy", function ([_, proxyOwner, owner]) {
         (await version.getTag()).should.be.equal("v0.0.1");
     });
   
-    it("Implementation is an uninitialized address", async () => {
-        await shouldFail.reverting(this.proxy.setImplementation(ZERO_ADDRESS, { from: proxyOwner }));
+    it("Proxy callable is an uninitialized address", async () => {
+        await shouldFail.reverting(this.proxy.setProxyCallable(ZERO_ADDRESS, { from: proxyOwner }));
     });
 
-    it("Implementation is not a contract", async () => {
-        await shouldFail.reverting(this.proxy.setImplementation(owner, { from: proxyOwner }));
+    it("Proxy callable is a contract", async () => {
+        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
     });
 
-    it("Implementation is a contract", async () => {
-        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
-    });
-
-    it("Implementation has been set", async () => {
-        const { logs } = await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
-        expectEvent.inLogs(logs, "InitialImplementation", {
-            implementation: this.petImpl.address,
+    it("Proxy callable has been set", async () => {
+        const { logs } = await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
+        expectEvent.inLogs(logs, "InitialProxyCallable", {
+            callable: this.petImpl.address,
         });
-    });    
-
-    it("The new implementation can't be the current implementation", async () => {
-        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
-        await shouldFail.reverting(this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner }));
     });
 
-    it("Implementation has been upgraded", async () => {
-        await this.proxy.setImplementation(this.petImpl.address, { from: proxyOwner });
-        const { logs } = await this.proxy.setImplementation(this.petBreedImpl.address, { from: proxyOwner });
-        expectEvent.inLogs(logs, "UpgradedImplementation", {
-            fromImplementation: this.petImpl.address,
-            toImplementation: this.petBreedImpl.address,
+    it("The new proxy callable can't be the current proxy callable", async () => {
+        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
+        await shouldFail.reverting(this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner }));
+    });
+
+    it("Proxy callable has been upgraded", async () => {
+        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
+        const { logs } = await this.proxy.setProxyCallable(this.petBreedImpl.address, { from: proxyOwner });
+        expectEvent.inLogs(logs, "UpgradedProxyCallable", {
+            fromCallable: this.petImpl.address,
+            toCallable: this.petBreedImpl.address,
         });
     });
 

@@ -41,15 +41,15 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
     }
 
     function _getVersion() internal returns (Version version) {
-        version = new Version(address(this), "OwnedUnstructuredProxy", "v0.0.1");
+        version = new Version("OwnedUnstructuredProxy", "v0.0.1");
     }
 
     /**
-     * @dev Allows the proxy owner to set the implementation
-     * @param _implementation address of the new implementation
+     * @dev Set the implementation
+     * @param toCallable proxy delegate implemenation
      */
-    function setImplementation(address _implementation) public onlyProxyOwner {
-        super.setImplementation(_implementation);
+    function setProxyCallable(ProxyCallable toCallable) public onlyProxyOwner {
+        super.setProxyCallable(toCallable);
         address proxyOwner = getProxyOwner();
         // call our fallback function to delegatecall initialize to set our implementation owner once
         (bool result, ) = address(this).call(abi.encodeWithSignature("initialize(address)", proxyOwner, proxyOwner));

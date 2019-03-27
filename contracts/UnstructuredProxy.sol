@@ -19,29 +19,29 @@
 pragma solidity ^0.5.5<0.7.0;
 
 import "./Proxy.sol";
-import "./utils/AddressUtil.sol";
+import "./ProxyCallable.sol";
 
 contract UnstructuredProxy is Proxy {
     /** 
-     *  Address storage position of the current implementation
+     *  Address storage position of the current proxy callable
      */
-    bytes32 private constant _implementationPosition = keccak256("org.maatech.proxy.implementation");
+    bytes32 private constant _proxyCallablePosition = keccak256("org.maatech.proxy.callable");
 
     /**
-    * @dev This event will be emitted the first time the implementation has been setup.
-    * @param implementation represents the address of the first implementation
+    * @dev This event will be emitted the first time the proxy callable has been setup.
+    * @param callable represents the address of the first proxy callable
     */
-    event InitialImplementation(address indexed implementation);
+    event InitialProxyCallable(address indexed callable);
 
     /**
-    * @dev This event will be emitted every time the implementation gets upgraded
-    * @param fromImplementation represents the address of the previous implementation
-    * @param toImplementation represents the address of the upgraded implementation
+    * @dev This event will be emitted every time the proxy callable gets upgraded
+    * @param fromCallable represents the address of the previous proxy callable
+    * @param toCallable represents the address of the upgraded roy callable
     */
-    event UpgradedImplementation(address indexed fromImplementation, address indexed toImplementation);
+    event UpgradedProxyCallable(address indexed fromCallable, address indexed toCallable);
 
     function _getVersion() internal returns (Version version) {
-        version = new Version(address(this), "UnstructuredProxy", "v0.0.1");
+        version = new Version("UnstructuredProxy", "v0.0.1");
     }
 
     /**
@@ -49,30 +49,27 @@ contract UnstructuredProxy is Proxy {
      *  @return address of the implementation to which it will be delegated
      */
     function _getImplementation() internal view returns (address _implementation) {
-        return _getAddress(_implementationPosition);
+        return _getAddress(_proxyCallablePosition);
     }
 
     /**
      * @dev Set the implementation
-     * @param _toImplementation address of the new implementation
+     * @param toCallable proxy delegate implemenation
      */
-    function setImplementation(address _toImplementation) public {
-        require(_toImplementation != address(0), "Uninitialized address. Implementation can't be assigned.");
-        require(
-            AddressUtil.isContract(_toImplementation) == true,
-            "Not a contract but an Externally Owned Address (EOA). Contract can't be assigned."
-        );
-        address _fromImplementation = _getImplementation();
-        if (_fromImplementation == address(0)) {
-            emit InitialImplementation(_toImplementation);
+    function setProxyCallable(ProxyCallable toCallable) public {
+        address _toCallable = address(toCallable);
+        require(_toCallable != address(0), "Uninitialized address. Proxy callable can't be assigned.");
+        address _fromCallable = _getImplementation();
+        if (_fromCallable == address(0)) {
+            emit InitialProxyCallable(_toCallable);
         } else {
             require(
-                _fromImplementation != _toImplementation,
-                "The new implementation can't be the current implementation."
+                _fromCallable != _toCallable,
+                "The new proxy callable can't be the current proxy callable."
             );
-            emit UpgradedImplementation(_fromImplementation, _toImplementation);
+            emit UpgradedProxyCallable(_fromCallable, _toCallable);
         }
-        _setAddress(_implementationPosition, _toImplementation);
+        _setAddress(_proxyCallablePosition, _toCallable);
     }
 
 }

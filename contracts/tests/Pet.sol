@@ -18,11 +18,17 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
-import "../ProxyOwnable.sol";
+import "../ProxyCallable.sol";
 
-contract Pet is ProxyOwnable {
+contract Pet is ProxyCallable {
+
+    Version private _version = new Version("Pet", "v0.0.1");
     string private _kind = "Undefined";
     string private _color = "Undefined";
+
+    function getVersion() public returns (Version version) {
+        version = _version;
+    }
 
     function getKind() public view returns (string memory kind) {
         kind = _kind;

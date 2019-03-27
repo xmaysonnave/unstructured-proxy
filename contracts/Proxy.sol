@@ -18,17 +18,24 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
-import "./ProxyVersion.sol";
+import "./Version.sol";
+import "./ProxyVersionManager.sol";
 
 /**
  * @title Proxy
  * @dev Abstract Contract. Gives the possibility to delegate any call to a foreign implementation.
  */
-contract Proxy is ProxyVersion {
+contract Proxy {
+
+    /** 
+     *  Proxy Version
+     */
+    bytes32 private constant _versionPosition = keccak256("org.maatech.proxy.version");
+
     /** 
      *  Contract Manager position
      */
-    bytes32 private constant _managerPosition = keccak256("org.maatech.proxy.implementation.manager");
+    bytes32 private constant _managerPosition = keccak256("org.maatech.proxy.version.manager");
 
     /**
      *  @dev Tells the address of the implementation where every call will be delegated.
@@ -36,11 +43,51 @@ contract Proxy is ProxyVersion {
      */
     function _getImplementation() internal view returns (address _implementation);
 
+    function _getVersion() internal returns (Version version);
+
+    constructor() public {
+        _setAddress(_versionPosition, address(_getVersion()));
+        _setAddress(_managerPosition, address(new ProxyVersionManager(this)));
+    }
+
+    /**
+     * @dev Tells the address at the current position
+     * @return contract address
+     */
+    function _getAddress(bytes32 _position) internal view returns (address _contract) {
+        bytes32 position = _position;
+        assembly {
+            _contract := sload(position)
+        }
+    }
+
+    /**
+     * @dev Sets the address of the current implementation
+     * @param _position storage position
+     * @param _contract contract address
+     */
+    function _setAddress(bytes32 _position, address _contract) internal {
+        require(_position != bytes32(0), "Uninitialized position");
+        require(_contract != address(0), "Uninitialized contract");
+        bytes32 position = _position;
+        assembly {
+            sstore(position, _contract)
+        }
+    }
+
     /**
      * @dev Tells the address of the current version
      * @return address of the current version
      */
-    function getManager() public view returns (address manager) {
+    function getVersion() public view returns (address version) {
+        version = _getAddress(_versionPosition);
+    }    
+
+    /**
+     * @dev Tells the address of the current version
+     * @return address of the current version
+     */
+    function getProxyVersionManager() public view returns (address manager) {
         manager = _getAddress(_managerPosition);
     }
 
