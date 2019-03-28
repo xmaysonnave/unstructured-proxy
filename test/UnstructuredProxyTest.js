@@ -1,5 +1,6 @@
 const { constants, expectEvent, shouldFail } = require('openzeppelin-test-helpers');
 const { ZERO_ADDRESS } = constants;
+const { expect } = require('chai');
 
 const UnstructuredProxy = artifacts.require("UnstructuredProxy");
 const Pet = artifacts.require("Pet");
@@ -16,8 +17,8 @@ contract("UnstructuredProxy", function ([_, proxyOwner, owner]) {
 
     it("ContractVersion", async () => {
         const version = await Version.at(await this.proxy.getVersion());
-        (await version.getName()).should.be.equal("UnstructuredProxy");
-        (await version.getTag()).should.be.equal("v0.0.1");
+        expect(await version.getName()).to.equal("UnstructuredProxy");
+        expect(await version.getTag()).to.equal("v0.0.1");
     });
   
     it("Proxy callable is an uninitialized address", async () => {

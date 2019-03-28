@@ -1,3 +1,5 @@
+const { expect } = require('chai');
+
 const AddressUtilMock = artifacts.require("AddressUtilMock");
 
 contract("AddressUtil", function ([_, anyone]) {
@@ -8,17 +10,17 @@ contract("AddressUtil", function ([_, anyone]) {
 
     it("Not in constructor", async () => {
         const test = await AddressUtilMock.new({ from: anyone });
-        (await test.notInConstructor()).should.be.equal(false);
+        expect(await test.notInConstructor()).to.equal(false);
     });
 
     it("Is not a contract", async () => {
         const test = await AddressUtilMock.new({ from: anyone });
-        (await test.isNotContract()).should.be.equal(false);
+        expect(await test.isNotContract()).to.equal(false);
     });
 
     it("Is a contract", async () => {
         const test = await AddressUtilMock.new({ from: anyone });
-        (await test.isContract()).should.be.equal(true);
+        expect(await test.isContract()).to.equal(true);
     });
 
 });

@@ -16,6 +16,7 @@
  *
  */
 const { shouldFail } = require('openzeppelin-test-helpers');
+const { expect } = require('chai');
 
 const encodedMethod = require("./helpers/encodedMethod")
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy")
@@ -33,7 +34,7 @@ contract("StoragePosition", ([_, proxyOwner, owner]) => {
         await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
         const position = web3.utils.sha3("org.maatech.proxy.callable");
         const storage = await web3.eth.getStorageAt(this.proxy.address, position);
-        assert.equal(web3.utils.toChecksumAddress(storage), web3.utils.toChecksumAddress(this.petImpl.address));
+        expect(web3.utils.toChecksumAddress(storage)).to.equal(web3.utils.toChecksumAddress(this.petImpl.address));
     });
 
     it("Only owner proxy callable storage position fallback call", async () => {
@@ -52,7 +53,7 @@ contract("StoragePosition", ([_, proxyOwner, owner]) => {
         await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
         const data = encodedMethod.call("setColor", ["string"], ["Blue"]);
         await web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: data });
-        (await this.pet.getColor()).should.be.equal("Blue");
+        expect(await this.pet.getColor()).to.equal("Blue");
     });
 
 });
