@@ -18,11 +18,12 @@
 pragma solidity ^0.5.5<0.7.0;
 
 import "./Proxy.sol";
-import "./Version.sol";
+import "./ProxyCallable.sol";
 
 contract ProxyVersionManager {
-    Version private _current;
-    Version[] private _versions;
+    
+    ProxyCallable private _current;
+    ProxyCallable[] private _callables;
     Proxy private _proxy;
 
     mapping(uint => address) public versionToImplementation;
@@ -31,8 +32,8 @@ contract ProxyVersionManager {
         _proxy = proxy;
     }
 
-    function _addContractVersion(Version _version) internal {
-        _versions.push(_version) - 1;
+    function addCallable(ProxyCallable _callable) external {
+        _callables.push(_callable) - 1;
     }
 
     function getProxy() public view returns (Proxy proxy) {

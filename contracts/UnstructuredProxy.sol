@@ -25,13 +25,7 @@ contract UnstructuredProxy is Proxy {
     /** 
      *  Address storage position of the current proxy callable
      */
-    bytes32 private constant _proxyCallablePosition = keccak256("org.maatech.proxy.callable");
-
-    /**
-    * @dev This event will be emitted the first time the proxy callable has been setup.
-    * @param callable represents the address of the first proxy callable
-    */
-    event InitialProxyCallable(address indexed callable);
+    bytes32 private constant _callable = keccak256("org.maatech.proxy.callable");
 
     /**
     * @dev This event will be emitted every time the proxy callable gets upgraded
@@ -49,7 +43,7 @@ contract UnstructuredProxy is Proxy {
      *  @return address of the implementation to which it will be delegated
      */
     function _getImplementation() internal view returns (address _implementation) {
-        return _getAddress(_proxyCallablePosition);
+        return _getAddress(_callable);
     }
 
     /**
@@ -60,13 +54,9 @@ contract UnstructuredProxy is Proxy {
         address _toCallable = address(toCallable);
         require(_toCallable != address(0), "Uninitialized address. Proxy callable can't be assigned.");
         address _fromCallable = _getImplementation();
-        if (_fromCallable == address(0)) {
-            emit InitialProxyCallable(_toCallable);
-        } else {
-            require(_fromCallable != _toCallable, "The new proxy callable can't be the current proxy callable.");
-            emit UpgradedProxyCallable(_fromCallable, _toCallable);
-        }
-        _setAddress(_proxyCallablePosition, _toCallable);
+        require(_fromCallable != _toCallable, "The new proxy callable can't be the current proxy callable.");
+        emit UpgradedProxyCallable(_fromCallable, _toCallable);
+        _setAddress(_callable, _toCallable);
     }
 
 }

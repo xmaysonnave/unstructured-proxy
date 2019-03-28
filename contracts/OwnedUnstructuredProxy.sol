@@ -18,15 +18,21 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
+import "./ProxyVersionManager.sol";
 import "./UnstructuredProxy.sol";
 
 contract OwnedUnstructuredProxy is UnstructuredProxy {
     /**
      *  Proxy Owner Storage position
      */
-    bytes32 private constant _proxyOwnerPosition = keccak256("org.maatech.proxy.owner");
+    bytes32 private constant _owner = keccak256("org.maatech.proxy.owner");
 
     event ProxyOwnershipTransferred(address indexed previousProxyOwner, address indexed newProxyOwner);
+
+    /**
+     *  Contract Manager position
+     */
+    bytes32 private constant _manager = keccak256("org.maatech.proxy.manager");
 
     /**
      * @dev Throws if called by any account other than the proxy owner.
@@ -36,12 +42,21 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
         _;
     }
 
-    constructor() public {
+    constructor() public Proxy() {
+        _setAddress(_manager, address(new ProxyVersionManager(this)));
         _setTransferProxyOwnership(msg.sender);
     }
 
     function _getVersion() internal returns (Version version) {
         version = new Version("OwnedUnstructuredProxy", "v0.0.1");
+    }
+
+    /**
+     * @dev Tells the address of the current version
+     * @return address of the current version
+     */
+    function getProxyVersionManager() public view returns (address manager) {
+        manager = _getAddress(_manager);
     }
 
     /**
@@ -54,6 +69,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
         // call our fallback function to delegatecall initialize to set our owner
         (bool result, ) = address(this).call(abi.encodeWithSignature("initialize(address)", proxyOwner, proxyOwner));
         require(result, "Failed to initialize");
+        ProxyVersionManager(getProxyVersionManager()).addCallable(toCallable);
     }
 
     /**
@@ -61,7 +77,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @return the address of the owner
      */
     function getProxyOwner() public view returns (address proxyOwner) {
-        proxyOwner = _getAddress(_proxyOwnerPosition);
+        proxyOwner = _getAddress(_owner);
     }
 
     /**
@@ -75,7 +91,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @return true if `msg.sender` is the proxy owner of the contract.
      */
     function _isProxyOwner() internal view returns (bool) {
-        return msg.sender == _getAddress(_proxyOwnerPosition);
+        return msg.sender == _getAddress(_owner);
     }
 
     /**
@@ -88,13 +104,13 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
 
     /**
      * @dev Transfers control of the contract to a newProxyOwner.
-     * @param newProxyOwner The address to transfer ownership to.
+     * @param newOwner The address to transfer ownership to.
      */
-    function _setTransferProxyOwnership(address newProxyOwner) internal {
-        require(newProxyOwner != address(0), "Uninitialized address");
-        require(newProxyOwner != getProxyOwner(), "The new proxy owner can't be the current proxy owner.");
-        emit ProxyOwnershipTransferred(getProxyOwner(), newProxyOwner);
-        _setAddress(_proxyOwnerPosition, newProxyOwner);
+    function _setTransferProxyOwnership(address newOwner) internal {
+        require(newOwner != address(0), "Uninitialized address");
+        require(newOwner != getProxyOwner(), "The new proxy owner can't be the current proxy owner.");
+        emit ProxyOwnershipTransferred(getProxyOwner(), newOwner);
+        _setAddress(_owner, newOwner);
     }
 
 }

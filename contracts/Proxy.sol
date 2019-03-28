@@ -19,7 +19,6 @@
 pragma solidity ^0.5.5<0.7.0;
 
 import "./Version.sol";
-import "./ProxyVersionManager.sol";
 
 /**
  * @title Proxy
@@ -29,12 +28,7 @@ contract Proxy {
     /** 
      *  Proxy Version
      */
-    bytes32 private constant _versionPosition = keccak256("org.maatech.proxy.version");
-
-    /** 
-     *  Contract Manager position
-     */
-    bytes32 private constant _managerPosition = keccak256("org.maatech.proxy.version.manager");
+    bytes32 private constant _version = keccak256("org.maatech.proxy.version");
 
     /**
      *  @dev Tells the address of the implementation where every call will be delegated.
@@ -45,8 +39,7 @@ contract Proxy {
     function _getVersion() internal returns (Version version);
 
     constructor() public {
-        _setAddress(_versionPosition, address(_getVersion()));
-        _setAddress(_managerPosition, address(new ProxyVersionManager(this)));
+        _setAddress(_version, address(_getVersion()));
     }
 
     /**
@@ -79,15 +72,7 @@ contract Proxy {
      * @return address of the current version
      */
     function getVersion() public view returns (address version) {
-        version = _getAddress(_versionPosition);
-    }
-
-    /**
-     * @dev Tells the address of the current version
-     * @return address of the current version
-     */
-    function getProxyVersionManager() public view returns (address manager) {
-        manager = _getAddress(_managerPosition);
+        version = _getAddress(_version);
     }
 
     /**

@@ -48,8 +48,9 @@ contract("UnstructuredProxy", function ([_, proxyOwner, owner]) {
 
     it("Proxy callable has been set", async () => {
         const { logs } = await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
-        expectEvent.inLogs(logs, "InitialProxyCallable", {
-            callable: this.petImpl.address,
+        expectEvent.inLogs(logs, "UpgradedProxyCallable", {
+            fromCallable: ZERO_ADDRESS,
+            toCallable: this.petImpl.address,
         });
     });
 
