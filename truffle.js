@@ -4,7 +4,7 @@ module.exports = {
     // sudo snap refresh solc --candidate
     compilers: {
         solc: {
-            version: "0.5.6",
+            version: "0.5.7",
             settings: {
                 optimizer: {
                     enabled: true, 

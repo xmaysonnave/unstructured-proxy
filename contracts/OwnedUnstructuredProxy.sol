@@ -51,7 +51,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
     function setProxyCallable(ProxyCallable toCallable) public onlyProxyOwner {
         super.setProxyCallable(toCallable);
         address proxyOwner = getProxyOwner();
-        // call our fallback function to delegatecall initialize to set our implementation owner once
+        // call our fallback function to delegatecall initialize to set our owner
         (bool result, ) = address(this).call(abi.encodeWithSignature("initialize(address)", proxyOwner, proxyOwner));
         require(result, "Failed to initialize");
     }

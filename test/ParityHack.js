@@ -31,10 +31,19 @@ contract("ParityHack", function ([_, proxyOwner, hackerOwner, owner]) {
       this.hacker = await ParityHack.new({ from: hackerOwner });
     });
 
-    it("Parity hack", async () => {
+    it("Implementation is not set", async () => {
         await this.hacker.setTarget(this.proxy.address);
         const data = encodedMethod.call("initialize", ["address"], [hackerOwner]);
         await shouldFail.reverting(web3.eth.sendTransaction({ from: hackerOwner, to: this.hacker.address, data: data }));
+        await shouldFail.reverting(web3.eth.sendTransaction({ from: hackerOwner, to: this.petBreed.address, data: data }));
+    });
+
+    it("Cannot change owner", async () => {
+        await this.hacker.setTarget(this.petBreedImpl.address); 
+        const dataInit = encodedMethod.call("initialize", ["address"], [hackerOwner]);
+        await shouldFail.reverting(web3.eth.sendTransaction({ from: hackerOwner, to: this.hacker.address, data: dataInit }));
+        const dataTransfer = encodedMethod.call("transferOwnership", ["address"], [hackerOwner]);
+        await shouldFail.reverting(web3.eth.sendTransaction({ from: hackerOwner, to: this.hacker.address, data: dataTransfer }));
     });
 
 });

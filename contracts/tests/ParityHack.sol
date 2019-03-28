@@ -18,14 +18,13 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
-import "../../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "../utils/AddressUtil.sol";
 
 /**
  * @title ParityHack
- * @dev delegateCall to make a ParityHack attemtp
+ * @dev delegateCall to make a delegatecall hack attempts
  */
-contract ParityHack is Ownable {
+contract ParityHack {
 
     address private _target;
 
@@ -50,7 +49,7 @@ contract ParityHack is Ownable {
      * @dev Fallback function allowing to perform a delegatecall to the given target.
      * This function will return whatever the target call returns
      */
-    function() external payable {
+    function() external payable isValid {
         address target = _target;
         assembly {
             let pointer := mload(0x40)
