@@ -15,27 +15,26 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-const { expectEvent } = require('openzeppelin-test-helpers');
+const { shouldFail } = require("openzeppelin-test-helpers");
 
+const encodedMethod = require("./helpers/encodedMethod");
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy");
-const Pet = artifacts.require("Pet");
+const ParityHack = artifacts.require("ParityHack");
+const PetBreed = artifacts.require("PetBreed");
 
-contract("Pet", function ([_, proxyOwner, owner]) {
+contract("ParityHack", function ([_, proxyOwner, hackerOwner, owner]) {
 
     beforeEach(async () => {
-        this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner });
-        this.petImpl = await Pet.new({ from: owner });
-        this.pet = await Pet.at(this.proxy.address);
+      this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner });
+      this.petBreedImpl = await PetBreed.new({ from: owner });
+      this.petBreed = await PetBreed.at(this.proxy.address);
+      this.hacker = await ParityHack.new({ from: hackerOwner });
     });
 
-    it("Pet does not have the function getBreed()", async () => {
-        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
-        try {
-             await pet.getBreed();
-        } catch (exception) {
-            return;
-        }
-        should.fail();
+    it("Parity hack", async () => {
+        await this.hacker.setTarget(this.proxy.address);
+        const data = encodedMethod.call("initialize", ["address"], [hackerOwner]);
+        await shouldFail.reverting(web3.eth.sendTransaction({ from: hackerOwner, to: this.hacker.address, data: data }));
     });
 
 });

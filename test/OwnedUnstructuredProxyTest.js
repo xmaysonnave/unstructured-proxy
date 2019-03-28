@@ -1,8 +1,25 @@
-const encodedMethod = require("./helpers/encodedMethod");
+/**
+ *   Copyright (c) 2019 Xavier Maysonnave.
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
 const { constants, expectEvent, shouldFail } = require('openzeppelin-test-helpers');
 const { ZERO_ADDRESS } = constants;
 const { expect } = require('chai');
 
+const encodedMethod = require("./helpers/encodedMethod");
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy");
 const Pet = artifacts.require("Pet");
 const PetBreed = artifacts.require("PetBreed");
@@ -35,7 +52,7 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
     });
 
     it("Proxy callable is initialized once", async () => {
-        this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
+        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
         const data = encodedMethod.call("initialize", ["address"], [proxyOwner]);
         await shouldFail.reverting(web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: data }));
     });
