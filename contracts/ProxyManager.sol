@@ -20,24 +20,30 @@ pragma solidity ^0.5.5<0.7.0;
 import "./Proxy.sol";
 import "./ProxyCallable.sol";
 
-contract ProxyVersionManager {
-    
-    ProxyCallable private _current;
+contract ProxyManager {
+    uint private _current;
     ProxyCallable[] private _callables;
-    Proxy private _proxy;
 
-    mapping(uint => address) public versionToImplementation;
-
-    constructor(Proxy proxy) public {
-        _proxy = proxy;
+    function add(ProxyCallable callable) public {
+        _current = _callables.push(callable) - 1;
     }
 
-    function addCallable(ProxyCallable _callable) external {
-        _callables.push(_callable) - 1;
+    function setPrevious() public returns (ProxyCallable callable) {
+        callable = ProxyCallable(0);
+        if (_current > 0) {
+            callable = _callables[--_current];
+        }
     }
 
-    function getProxy() public view returns (Proxy proxy) {
-        proxy = _proxy;
+    function setNext() public returns (ProxyCallable callable) {
+        callable = ProxyCallable(0);
+        if (_current + 1 < _callables.length) {
+            callable = _callables[++_current];
+        }
+    }
+
+    function getCurrent() public view returns (ProxyCallable callable) {
+        callable = _callables[_current];
     }
 
 }

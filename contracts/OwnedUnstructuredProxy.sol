@@ -18,7 +18,7 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
-import "./ProxyVersionManager.sol";
+import "./ProxyManager.sol";
 import "./UnstructuredProxy.sol";
 
 contract OwnedUnstructuredProxy is UnstructuredProxy {
@@ -35,15 +35,15 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
     bytes32 private constant _manager = keccak256("org.maatech.proxy.manager");
 
     /**
-     * @dev Throws if called by any account other than the proxy owner.
+     * @dev Require if called by any account other than the proxy owner.
      */
     modifier onlyProxyOwner() {
         require(_isProxyOwner(), "onlyProxyOwner");
         _;
     }
 
-    constructor() public Proxy() {
-        _setAddress(_manager, address(new ProxyVersionManager(this)));
+    constructor() public {
+        _setAddress(_manager, address(new ProxyManager()));
         _setTransferProxyOwnership(msg.sender);
     }
 
@@ -55,21 +55,21 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @dev Tells the address of the current version
      * @return address of the current version
      */
-    function getProxyVersionManager() public view returns (address manager) {
+    function getProxyManager() public view returns (address manager) {
         manager = _getAddress(_manager);
     }
 
     /**
-     * @dev Set the implementation
-     * @param toCallable proxy delegate implemenation
+     * @dev Set the Proxy Callable
+     * @param callable proxy callable delegate
      */
-    function setProxyCallable(ProxyCallable toCallable) public onlyProxyOwner {
-        super.setProxyCallable(toCallable);
+    function setProxyCallable(ProxyCallable callable) public onlyProxyOwner {
+        super.setProxyCallable(callable);
         address proxyOwner = getProxyOwner();
         // call our fallback function to delegatecall initialize to set our owner
         (bool result, ) = address(this).call(abi.encodeWithSignature("initialize(address)", proxyOwner, proxyOwner));
         require(result, "Failed to initialize");
-        ProxyVersionManager(getProxyVersionManager()).addCallable(toCallable);
+        ProxyManager(getProxyManager()).add(callable);
     }
 
     /**
@@ -88,7 +88,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
     }
 
     /**
-     * @return true if `msg.sender` is the proxy owner of the contract.
+     * @return true if msg.sender is the proxy owner of the contract.
      */
     function _isProxyOwner() internal view returns (bool) {
         return msg.sender == _getAddress(_owner);

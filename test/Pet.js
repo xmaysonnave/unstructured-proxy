@@ -15,8 +15,6 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-const { expectEvent } = require('openzeppelin-test-helpers');
-
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy");
 const Pet = artifacts.require("Pet");
 

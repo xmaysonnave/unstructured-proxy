@@ -25,7 +25,6 @@ import "../utils/AddressUtil.sol";
  * @dev delegateCall to make a delegatecall hack attempts
  */
 contract ParityHack {
-
     address private _target;
 
     modifier isValid() {

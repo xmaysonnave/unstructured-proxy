@@ -20,10 +20,10 @@
   "author": "Xavier Maysonnave",
   "license": "GPL V3",
   "devDependencies": {
-    "ethereumjs-abi": "^0.6.7",
-    "ethlint": "^1.2.3",
     "chai": "^4.2.0",
     "chai-bn": "^0.1.1",
+    "ethereumjs-abi": "^0.6.7",
+    "ethlint": "^1.2.3",
     "openzeppelin-solidity": "^2.2",
     "openzeppelin-test-helpers": "^0.3.0",
     "prettier": "^1.16.4",
@@ -32,7 +32,9 @@
     "solidity-coverage": "^0.5.11",
     "solium": "^1.2.3",
     "solium-plugin-security": "^0.1.1",
-    "truffle": "^5.0.9",
     "web3": "^1.0.0-beta.50"
+  },
+  "dependencies": {
+    "truffle": "^5.0.10"
   }
 }
