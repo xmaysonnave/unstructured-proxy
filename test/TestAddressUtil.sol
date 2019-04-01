@@ -15,15 +15,28 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-const { expect } = require('chai');
+pragma solidity ^0.5.5<0.7.0;
 
-const StringUtilMock = artifacts.require("StringUtilMock");
+import "truffle/build/Assert.sol";
 
-contract("StringUtil", function ([_, anyone]) {
+import "../contracts/utils/AddressUtil.sol";
 
-    it("append", async () => {
-        const test = await StringUtilMock.new({ from: anyone });
-        expect(await test.appendTest()).to.equal(true);
-    });
+contract TestAddressUtil {
 
-});
+    constructor() public {
+        Assert.equal(AddressUtil.isConstructor(address(this)), true, "should be true");
+    }
+
+    function testIsContract() public {
+        Assert.equal(AddressUtil.isContract(address(this)), true, "should be true");
+    }
+
+    function testIsNotContract() public {
+        Assert.equal(AddressUtil.isContract(msg.sender), false, "should be false");
+    }
+
+    function testNotInConstructor() public {
+        Assert.equal(AddressUtil.isConstructor(address(this)), false, "should be false");
+    }
+
+}

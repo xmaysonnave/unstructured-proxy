@@ -17,24 +17,14 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
-import "../../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
-import "../utils/AddressUtil.sol";
+import "truffle/build/Assert.sol";
 
-contract AddressUtilMock is Ownable {
-    constructor() public {
-        AddressUtil.isConstructor(address(this));
-    }
+import "../contracts/utils/StringUtil.sol";
 
-    function isContract() public view returns (bool result) {
-        result = AddressUtil.isContract(address(this));
-    }
-
-    function isNotContract() public view returns (bool result) {
-        result = AddressUtil.isContract(owner());
-    }
-
-    function notInConstructor() public view returns (bool result) {
-        result = AddressUtil.isConstructor(address(this));
+contract TestStringUtil {
+    function testAppend() public {
+        bytes32 test = keccak256(abi.encodePacked("aabbccddee"));
+        Assert.equal(test == keccak256(StringUtil.append("aa", "bb", "cc", "dd", "ee")), true, "should be true");
     }
 
 }

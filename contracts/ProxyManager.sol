@@ -17,25 +17,26 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
+import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./Proxy.sol";
 import "./ProxyCallable.sol";
 
-contract ProxyManager {
+contract ProxyManager is Ownable {
     uint private _current;
     ProxyCallable[] private _callables;
 
-    function add(ProxyCallable callable) public {
+    function add(ProxyCallable callable) public onlyOwner {
         _current = _callables.push(callable) - 1;
     }
 
-    function setPrevious() public returns (ProxyCallable callable) {
+    function setPrevious() public onlyOwner returns (ProxyCallable callable) {
         callable = ProxyCallable(0);
         if (_current > 0) {
             callable = _callables[--_current];
         }
     }
 
-    function setNext() public returns (ProxyCallable callable) {
+    function setNext() public onlyOwner returns (ProxyCallable callable) {
         callable = ProxyCallable(0);
         if (_current + 1 < _callables.length) {
             callable = _callables[++_current];
