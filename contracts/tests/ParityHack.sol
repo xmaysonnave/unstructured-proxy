@@ -28,11 +28,8 @@ contract ParityHack {
     address private _target;
 
     modifier isValid() {
-        require(_target != address(0), "Uninitialized address. target cannot be called.");
-        require(
-            AddressUtil.isContract(_target) == true,
-            "Not a contract but an Externally Owned Address (EOA). Target cannot be assigned."
-        );
+        require(_target != address(0));
+        require(AddressUtil.isContract(_target) == true);
         _;
     }
 

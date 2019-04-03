@@ -38,7 +38,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @dev Require if called by any account other than the proxy owner.
      */
     modifier onlyProxyOwner() {
-        require(_isProxyOwner(), "onlyProxyOwner");
+        require(_isProxyOwner());
         _;
     }
 
@@ -51,25 +51,45 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
         version = new Version("OwnedUnstructuredProxy", "v0.0.1");
     }
 
+    function setPreviousProxyCallable() public onlyProxyOwner {
+        (ProxyCallable fromCallable, ProxyCallable toCallable) = ProxyManager(getProxyManager()).setPrevious();
+        if (toCallable != ProxyCallable(0)) {
+            emit UpgradedProxyCallable(address(fromCallable), address(toCallable));
+        }
+    }
+
+    function setNextProxyCallable() public onlyProxyOwner {
+        (ProxyCallable fromCallable, ProxyCallable toCallable) = ProxyManager(getProxyManager()).setNext();
+        if (toCallable != ProxyCallable(0)) {
+            emit UpgradedProxyCallable(address(fromCallable), address(toCallable));
+        }
+    }
+
+    function getCurrentProxyCallable() public view onlyProxyOwner returns (ProxyCallable callable) {
+        callable = ProxyManager(getProxyManager()).getCurrent();
+    }
+
     /**
      * @dev Tells the address of the current version
      * @return address of the current version
      */
-    function getProxyManager() public view returns (address manager) {
+    function getProxyManager() public view onlyProxyOwner returns (address manager) {
         manager = _getAddress(_manager);
     }
 
     /**
      * @dev Set the Proxy Callable
-     * @param callable proxy callable delegate
+     * @param toCallable proxy callable delegate
      */
-    function setProxyCallable(ProxyCallable callable) public onlyProxyOwner {
-        super.setProxyCallable(callable);
+    function setProxyCallable(ProxyCallable toCallable) public onlyProxyOwner {
+        super.setProxyCallable(toCallable);
         address proxyOwner = getProxyOwner();
-        // call our fallback function to delegatecall initialize to set our owner
-        (bool result, ) = address(this).call(abi.encodeWithSignature("initialize(address)", proxyOwner, proxyOwner));
-        require(result, "Failed to initialize");
-        ProxyManager(getProxyManager()).add(callable);
+        // call fallback to delegatecall initialize and set owner
+        (bool success, ) = address(this).call(
+            abi.encodeWithSignature("initialize(address)", proxyOwner, proxyOwner)
+        );
+        require(success);
+        ProxyManager(getProxyManager()).add(toCallable);
     }
 
     /**
@@ -107,8 +127,8 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @param newOwner The address to transfer ownership to.
      */
     function _setTransferProxyOwnership(address newOwner) internal {
-        require(newOwner != address(0), "Uninitialized address");
-        require(newOwner != getProxyOwner(), "The new proxy owner can't be the current proxy owner.");
+        require(newOwner != address(0));
+        require(newOwner != getProxyOwner());
         emit ProxyOwnershipTransferred(getProxyOwner(), newOwner);
         _setAddress(_owner, newOwner);
     }

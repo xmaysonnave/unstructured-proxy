@@ -23,9 +23,9 @@ contract Version {
     string private _tag;
 
     constructor(string memory name, string memory tag) public {
-        require(bytes(name).length != 0, "Mandatory implementation");
-        require(bytes(name).length != 0, "Mandatory name");
-        require(bytes(tag).length != 0, "Mandatory tag");
+        require(bytes(name).length != 0);
+        require(bytes(name).length != 0);
+        require(bytes(tag).length != 0);
         _id = keccak256(abi.encode(name, tag));
         _name = name;
         _tag = tag;

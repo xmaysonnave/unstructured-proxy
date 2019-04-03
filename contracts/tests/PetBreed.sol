@@ -33,7 +33,7 @@ contract PetBreed is Pet {
     }
 
     function setBreed(string memory breed) public onlyOwner {
-        require(bytes(breed).length != 0, "Breed is missing.");
+        require(bytes(breed).length != 0);
         _breed = breed;
     }
 

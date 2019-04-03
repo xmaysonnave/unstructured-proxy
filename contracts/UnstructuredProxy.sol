@@ -39,22 +39,22 @@ contract UnstructuredProxy is Proxy {
     }
 
     /**
-     *  @dev Tells the address of the implementation where every call will be delegated.
-     *  @return address of the implementation to which it will be delegated
+     *  @dev Tells the address of the callable where every call will be delegated.
+     *  @return address of the callable to which it will be delegated
      */
-    function _getImplementation() internal view returns (address _implementation) {
-        return _getAddress(_callable);
+    function _getCallable() internal view returns (address callable) {
+        callable = _getAddress(_callable);
     }
 
     /**
      * @dev Set the implementation
-     * @param toCallable proxy delegate implemenation
+     * @param toCallable proxy delegate callable
      */
     function setProxyCallable(ProxyCallable toCallable) public {
         address _toCallable = address(toCallable);
-        require(_toCallable != address(0), "Uninitialized address. Proxy callable can't be assigned.");
-        address _fromCallable = _getImplementation();
-        require(_fromCallable != _toCallable, "The new proxy callable can't be the current proxy callable.");
+        require(_toCallable != address(0));
+        address _fromCallable = _getCallable();
+        require(_fromCallable != _toCallable);
         emit UpgradedProxyCallable(_fromCallable, _toCallable);
         _setAddress(_callable, _toCallable);
     }

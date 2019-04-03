@@ -15,9 +15,9 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-const { constants, expectEvent, shouldFail } = require('openzeppelin-test-helpers');
+const { constants, expectEvent, shouldFail } = require("openzeppelin-test-helpers");
 const { ZERO_ADDRESS } = constants;
-const { expect } = require('chai');
+const { expect } = require("chai");
 
 const UnstructuredProxy = artifacts.require("UnstructuredProxy");
 const Pet = artifacts.require("Pet");

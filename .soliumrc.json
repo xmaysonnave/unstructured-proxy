@@ -4,15 +4,16 @@
         "security"
     ],
     "rules": {
-        "quotes": [
-            "error",
-            "double"
-        ],
+        "error-reason": "off",
         "indentation": [
             "error",
             4
         ],
         "no-empty-blocks": "off",
+        "quotes": [
+            "error",
+            "double"
+        ],
         "security/no-inline-assembly": "off",
         "security/no-low-level-calls": "off",
         "security/no-call-value": "off"

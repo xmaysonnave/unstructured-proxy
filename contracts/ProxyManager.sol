@@ -29,17 +29,19 @@ contract ProxyManager is Ownable {
         _current = _callables.push(callable) - 1;
     }
 
-    function setPrevious() public onlyOwner returns (ProxyCallable callable) {
-        callable = ProxyCallable(0);
+    function setPrevious() public onlyOwner returns (ProxyCallable fromCallable, ProxyCallable toCallable) {
+        fromCallable = getCurrent();
+        toCallable = ProxyCallable(0);
         if (_current > 0) {
-            callable = _callables[--_current];
+            toCallable = _callables[--_current];
         }
     }
 
-    function setNext() public onlyOwner returns (ProxyCallable callable) {
-        callable = ProxyCallable(0);
+    function setNext() public onlyOwner returns (ProxyCallable fromCallable, ProxyCallable toCallable) {
+        fromCallable = getCurrent();
+        toCallable = ProxyCallable(0);
         if (_current + 1 < _callables.length) {
-            callable = _callables[++_current];
+            toCallable = _callables[++_current];
         }
     }
 

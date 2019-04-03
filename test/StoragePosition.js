@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-const { shouldFail } = require('openzeppelin-test-helpers');
-const { expect } = require('chai');
+const { shouldFail } = require("openzeppelin-test-helpers");
+const { expect } = require("chai");
 
 const encodedMethod = require("./helpers/encodedMethod")
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy")

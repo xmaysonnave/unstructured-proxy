@@ -34,7 +34,7 @@ contract Pet is ProxyCallable {
     }
 
     function setKind(string memory kind) public onlyOwner {
-        require(bytes(kind).length != 0, "Kind is missing.");
+        require(bytes(kind).length != 0);
         _kind = kind;
     }
 
@@ -43,7 +43,7 @@ contract Pet is ProxyCallable {
     }
 
     function setColor(string memory color) public onlyOwner {
-        require(bytes(color).length != 0, "Color is missing.");
+        require(bytes(color).length != 0);
         _color = color;
     }
 

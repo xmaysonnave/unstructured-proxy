@@ -17,7 +17,7 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
-import "truffle/build/Assert.sol";
+import "truffle/Assert.sol";
 
 import "../contracts/utils/AddressUtil.sol";
 

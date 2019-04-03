@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-const { expect } = require('chai');
+const { expect } = require("chai");
 
 const encodedMethod = require("./helpers/encodedMethod");
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy");
@@ -55,7 +55,7 @@ contract("PetBreed", function ([_, proxyOwner, owner]) {
         await this.proxy.setProxyCallable(this.petBreedImpl.address, { from: proxyOwner });
         expect(web3.utils.toChecksumAddress(await this.petBreedImpl.owner())).to.equal(web3.utils.toChecksumAddress(owner));
         expect(web3.utils.toChecksumAddress(proxyOwner)).to.equal(web3.utils.toChecksumAddress(await this.pet.owner()));
-        expect(web3.utils.toChecksumAddress(proxyOwner)) .to.equal(web3.utils.toChecksumAddress(await this.petBreed.owner()));
+        expect(web3.utils.toChecksumAddress(proxyOwner)).to.equal(web3.utils.toChecksumAddress(await this.petBreed.owner()));
     });
 
     it("Pet Storage alignment", async () => {

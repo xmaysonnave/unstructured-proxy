@@ -31,10 +31,10 @@ contract Proxy {
     bytes32 private constant _version = keccak256("org.maatech.proxy.version");
 
     /**
-     *  @dev Tells the address of the implementation where every call will be delegated.
-     *  @return address of the implementation to which it will be delegated
+     *  @dev Tells the address of the callable where every call will be delegated.
+     *  @return address of the callable to which it will be delegated
      */
-    function _getImplementation() internal view returns (address _implementation);
+    function _getCallable() internal view returns (address callable);
 
     function _getVersion() internal returns (Version version);
 
@@ -59,8 +59,8 @@ contract Proxy {
      * @param _contract contract address
      */
     function _setAddress(bytes32 _position, address _contract) internal {
-        require(_position != bytes32(0), "Uninitialized position");
-        require(_contract != address(0), "Uninitialized contract");
+        require(_position != bytes32(0));
+        require(_contract != address(0));
         bytes32 position = _position;
         assembly {
             sstore(position, _contract)
@@ -76,16 +76,16 @@ contract Proxy {
     }
 
     /**
-     * @dev Fallback function allowing to perform a delegatecall to the given implementation.
-     * This function will return whatever the implementation call returns
+     * @dev Fallback function allowing to perform a delegatecall to the given callable.
+     * This function will return whatever the callable call returns
      */
     function() external payable {
-        address _implementation = _getImplementation();
-        require(_implementation != address(0), "Uninitialized address. Implementation cannot be called.");
+        address _callable = _getCallable();
+        require(_callable != address(0));
         assembly {
             let pointer := mload(0x40)
             calldatacopy(pointer, 0, calldatasize)
-            let result := delegatecall(gas, _implementation, pointer, calldatasize, 0, 0)
+            let result := delegatecall(gas, _callable, pointer, calldatasize, 0, 0)
             let size := returndatasize
             returndatacopy(pointer, 0, size)
             switch result

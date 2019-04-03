@@ -15,22 +15,23 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-const { constants, expectEvent, shouldFail } = require('openzeppelin-test-helpers');
+const { constants, expectEvent, shouldFail } = require("openzeppelin-test-helpers");
 const { ZERO_ADDRESS } = constants;
 const { expect } = require('chai');
 
-const encodedMethod = require("./helpers/encodedMethod");
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy");
 const Pet = artifacts.require("Pet");
 const PetBreed = artifacts.require("PetBreed");
 const Version = artifacts.require("Version");
 
-contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxyOwner]) {
+contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxyOwner, anyone]) {
 
     beforeEach(async () => {
         this.proxy = await OwnedUnstructuredProxy.new({ from: proxyOwner });
         this.petImpl = await Pet.new({ from: owner });
-        this.petBreedImpl = await PetBreed.new({ from: owner })
+        this.petBreedImpl = await PetBreed.new({ from: owner });
+        this.pet = await Pet.at(this.proxy.address);
+        this.petBreed = await PetBreed.at(this.proxy.address);
     });
 
     it("ContractVersion", async () => {
@@ -45,25 +46,19 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
 
     it("Proxy callable is a contract", async () => {
         await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
-    });    
+    });
   
     it("Only a proxy owner can set an proxy callable", async () => {
         await shouldFail.reverting(this.proxy.setProxyCallable(this.petImpl.address, { from: anotherProxyOwner }));
     });
 
-    it("Proxy callable is initialized once", async () => {
-        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
-        const data = encodedMethod.call("initialize", ["address"], [proxyOwner]);
-        await shouldFail.reverting(web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: data }));
-    });
-
     it("New proxy owner is an uninitialized address", async () => {
         await shouldFail.reverting(this.proxy.setTransferProxyOwnership(ZERO_ADDRESS, { from: proxyOwner }));
-    });    
+    });
 
     it("New proxy owner can't be the current proxy owner", async () => {
         await shouldFail.reverting(this.proxy.setTransferProxyOwnership(proxyOwner, { from: proxyOwner }));
-    });    
+    });
 
     it("Proxy ownership has been transferred", async () => {
         const { logs } = await this.proxy.setTransferProxyOwnership(anotherProxyOwner, { from: proxyOwner });
@@ -71,6 +66,30 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
             previousProxyOwner: proxyOwner,
             newProxyOwner: anotherProxyOwner,
         });
+    });
+
+    it("Proxy callable has been set", async () => {
+        const { logs } = await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
+        expectEvent.inLogs(logs, "UpgradedProxyCallable", {
+            fromCallable: ZERO_ADDRESS,
+            toCallable: this.petImpl.address,
+        });
+    });
+
+    it("Proxy callable has been upgraded", async () => {
+        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
+        const { logs } = await this.proxy.setProxyCallable(this.petBreedImpl.address, { from: proxyOwner });
+        expectEvent.inLogs(logs, "UpgradedProxyCallable", {
+            fromCallable: this.petImpl.address,
+            toCallable: this.petBreedImpl.address,
+        });
+    });
+
+    it("Change ownership", async () => {
+        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
+        await this.proxy.setProxyCallable(this.petBreedImpl.address, { from: proxyOwner });
+        expect(web3.utils.toChecksumAddress(proxyOwner)).to.equal(web3.utils.toChecksumAddress(await this.pet.owner()));
+        expect(web3.utils.toChecksumAddress(proxyOwner)).to.equal(web3.utils.toChecksumAddress(await this.petBreed.owner()));
     });
 
 });

@@ -17,7 +17,7 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
-import "truffle/build/Assert.sol";
+import "truffle/Assert.sol";
 
 import "../contracts/ProxyManager.sol";
 import "../contracts/ProxyCallable.sol";
@@ -44,32 +44,32 @@ contract TestProxyManager {
     }
 
     function testSetPreviousCallable() public {
-        ProxyCallable callable = manager.setPrevious();
-        Assert.equal(address(callable), address(pet), "not matching");
-        callable = manager.getCurrent();
+        (, ProxyCallable toCallable) = manager.setPrevious();
+        Assert.equal(address(toCallable), address(pet), "not matching");
+        ProxyCallable callable = manager.getCurrent();
         Assert.equal(address(callable), address(pet), "not matching");
     }
 
     function testLowerBoundCallable() public {
         manager.setPrevious();
-        ProxyCallable callable = manager.setPrevious();
-        Assert.equal(address(callable), address(0), "expecting address(0)");
-        callable = manager.getCurrent();
+        (, ProxyCallable toCallable) = manager.setPrevious();
+        Assert.equal(address(toCallable), address(0), "expecting address(0)");
+        ProxyCallable callable = manager.getCurrent();
         Assert.equal(address(callable), address(pet), "not matching");
     }
 
     function testSetNextCallable() public {
         manager.setPrevious();
-        ProxyCallable callable = manager.setNext();
-        Assert.equal(address(callable), address(petBreed), "not matching");
-        callable = manager.getCurrent();
+        (, ProxyCallable toCallable) = manager.setNext();
+        Assert.equal(address(toCallable), address(petBreed), "not matching");
+        ProxyCallable callable = manager.getCurrent();
         Assert.equal(address(callable), address(petBreed), "not matching");
     }
 
     function testUpperBoundCallable() public {
-        ProxyCallable callable = manager.setNext();
-        Assert.equal(address(callable), address(0), "expecting address(0)");
-        callable = manager.getCurrent();
+        (, ProxyCallable toCallable) = manager.setNext();
+        Assert.equal(address(toCallable), address(0), "expecting address(0)");
+        ProxyCallable callable = manager.getCurrent();
         Assert.equal(address(callable), address(petBreed), "not matching");
     }
 

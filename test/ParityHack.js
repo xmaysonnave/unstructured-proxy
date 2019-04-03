@@ -40,8 +40,6 @@ contract("ParityHack", function ([_, proxyOwner, hackerOwner, owner]) {
 
     it("Cannot change owner", async () => {
         await this.hacker.setTarget(this.petBreedImpl.address); 
-        const dataInit = encodedMethod.call("initialize", ["address"], [hackerOwner]);
-        await shouldFail.reverting(web3.eth.sendTransaction({ from: hackerOwner, to: this.hacker.address, data: dataInit }));
         const dataTransfer = encodedMethod.call("transferOwnership", ["address"], [hackerOwner]);
         await shouldFail.reverting(web3.eth.sendTransaction({ from: hackerOwner, to: this.hacker.address, data: dataTransfer }));
     });
