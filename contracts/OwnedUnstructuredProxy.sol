@@ -35,13 +35,15 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
     bytes32 private constant _manager = keccak256("org.maatech.proxy.manager");
 
     /**
-    * @dev This event will be emitted every time the callable cannot be upgraded
-    * @param callable represents the address of the current callable
-    */
+     * @dev This event will be emitted every time the callable cannot be upgraded
+     * @param callable represents the address of the current callable
+     */
     event NotUpgradedCallable(address indexed callable);
 
     /**
-     * @dev Require if called by any account other than the proxy owner.
+     * @dev Modifier to check whether the msg.sender is the proxy owner.
+     * If it is, it will run the function. Otherwise, it will delegate the call
+     * to the callable.
      */
     modifier onlyProxyOwner() {
         require(_isProxyOwner());
@@ -83,8 +85,8 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @dev Tells the address of the current version
      * @return address of the current version
      */
-    function getProxyManager() public view onlyProxyOwner returns (ProxyManager manager) {
-        manager = ProxyManager(_getAddress(_manager));
+    function getProxyManager() public view onlyProxyOwner returns (address manager) {
+        manager = _getAddress(_manager);
     }
 
     /**
@@ -93,13 +95,13 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      */
     function setCallable(ProxyCallable toCallable) public onlyProxyOwner {
         super.setCallable(toCallable);
-        address proxyOwner = getProxyOwner();
-        // call fallback to delegatecall initialize and set owner
+        address owner = toCallable.owner();
+        // fallback to initialize and set owner as callable contract owner
         (bool success, ) = address(this).call(
-            abi.encodeWithSignature("initialize(address)", proxyOwner, proxyOwner)
+            abi.encodeWithSignature("initialize(address)", owner, owner)
         );
         require(success);
-        getProxyManager().add(toCallable);
+        ProxyManager(getProxyManager()).add(toCallable);
     }
 
     /**
@@ -142,6 +144,14 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
         require(newOwner != previousOwner);
         _setAddress(_owner, newOwner);
         emit ProxyOwnershipTransferred(previousOwner, newOwner);
+    }
+
+    /**
+     * @dev Only fall back when the sender is not the proxy owner.
+     */
+    function () external payable {
+        require(_isProxyOwner() == false);
+        _fallback();
     }
 
 }

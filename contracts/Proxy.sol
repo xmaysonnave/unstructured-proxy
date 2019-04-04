@@ -76,15 +76,30 @@ contract Proxy {
     }
 
     /**
+     * @dev Fallback function.
+     * Implemented entirely in _fallback.
+     */
+    function () external payable {
+        _fallback();
+    }
+
+    /**
+    * @dev fallback implementation.
+    * Extracted to enable manual triggering.
+    */
+    function _fallback() internal {
+        _delegate(_getCallable());
+    }
+
+    /**
      * @dev Fallback function allowing to perform a delegatecall to the given callable.
      * This function will return whatever the callable call returns
      */
-    function() external payable {
-        address _callable = _getCallable();
-        require(_callable != address(0));
+    function _delegate(address callable) internal {
+        require(callable != address(0));
         assembly {
             calldatacopy(0, 0, calldatasize)
-            let result := delegatecall(gas, _callable, 0, calldatasize, 0, 0)
+            let result := delegatecall(gas, callable, 0, calldatasize, 0, 0)
             let size := returndatasize
             returndatacopy(0, 0, size)
             switch result

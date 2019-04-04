@@ -20,7 +20,6 @@ const { ZERO_ADDRESS } = constants;
 const { expect } = require('chai');
 
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy");
-const ProxyManager = artifacts.require("ProxyManager");
 const Pet = artifacts.require("Pet");
 const PetBreed = artifacts.require("PetBreed");
 const Version = artifacts.require("Version");
@@ -71,8 +70,8 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
             previousOwner: proxyOwner,
             newOwner: anotherProxyOwner,
         });
-        const manager = await ProxyManager.at(await this.proxy.getProxyManager({ from: anotherProxyOwner }));
-        expect(web3.utils.toChecksumAddress(this.proxy.address)).to.equal(web3.utils.toChecksumAddress(await manager.owner()));
+        // const manager = await ProxyManager.at(await this.proxy.getProxyManager({ from: anotherProxyOwner }));
+        // expect(web3.utils.toChecksumAddress(this.proxy.address)).to.equal(web3.utils.toChecksumAddress(await manager.owner()));
     });
 
     it("Proxy callable has been set", async () => {
@@ -95,8 +94,8 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
     it("Callable Change ownership", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
-        expect(web3.utils.toChecksumAddress(proxyOwner)).to.equal(web3.utils.toChecksumAddress(await this.pet.owner()));
-        expect(web3.utils.toChecksumAddress(proxyOwner)).to.equal(web3.utils.toChecksumAddress(await this.petBreed.owner()));
+        expect(web3.utils.toChecksumAddress(owner)).to.equal(web3.utils.toChecksumAddress(await this.pet.owner()));
+        expect(web3.utils.toChecksumAddress(owner)).to.equal(web3.utils.toChecksumAddress(await this.petBreed.owner()));
     });
 
     it("Unknown current proxy callable", async () => {
