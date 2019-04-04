@@ -38,36 +38,46 @@ contract TestProxyManager {
         manager.add(petBreed);
     }
 
-    function testCurrentCallable() public {
+    function testUnknownCurrent() public {
+        ProxyManager emtpyManager = new ProxyManager();
+        ProxyCallable callable = emtpyManager.getCurrent();
+        Assert.equal(address(callable), address(0), "not matching");
+    }
+
+    function testCurrent() public {
         ProxyCallable callable = manager.getCurrent();
         Assert.equal(address(callable), address(petBreed), "not matching");
     }
 
-    function testSetPreviousCallable() public {
-        (, ProxyCallable toCallable) = manager.setPrevious();
+    function testSetPrevious() public {
+        (ProxyCallable fromCallable, ProxyCallable toCallable) = manager.setPrevious();
+        Assert.equal(address(fromCallable), address(petBreed), "not matching");
         Assert.equal(address(toCallable), address(pet), "not matching");
         ProxyCallable callable = manager.getCurrent();
         Assert.equal(address(callable), address(pet), "not matching");
     }
 
-    function testLowerBoundCallable() public {
+    function testLowerBound() public {
         manager.setPrevious();
-        (, ProxyCallable toCallable) = manager.setPrevious();
+        (ProxyCallable fromCallable, ProxyCallable toCallable) = manager.setPrevious();
+        Assert.equal(address(fromCallable), address(pet), "not matching");
         Assert.equal(address(toCallable), address(0), "expecting address(0)");
         ProxyCallable callable = manager.getCurrent();
         Assert.equal(address(callable), address(pet), "not matching");
     }
 
-    function testSetNextCallable() public {
+    function testSetNext() public {
         manager.setPrevious();
-        (, ProxyCallable toCallable) = manager.setNext();
+        (ProxyCallable fromCallable, ProxyCallable toCallable) = manager.setNext();
+        Assert.equal(address(fromCallable), address(pet), "not matching");
         Assert.equal(address(toCallable), address(petBreed), "not matching");
         ProxyCallable callable = manager.getCurrent();
         Assert.equal(address(callable), address(petBreed), "not matching");
     }
 
-    function testUpperBoundCallable() public {
-        (, ProxyCallable toCallable) = manager.setNext();
+    function testUpperBound() public {
+        (ProxyCallable fromCallable, ProxyCallable toCallable) = manager.setNext();
+        Assert.equal(address(fromCallable), address(petBreed), "not matching");
         Assert.equal(address(toCallable), address(0), "expecting address(0)");
         ProxyCallable callable = manager.getCurrent();
         Assert.equal(address(callable), address(petBreed), "not matching");

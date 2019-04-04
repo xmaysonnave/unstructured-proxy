@@ -45,8 +45,11 @@ contract ProxyManager is Ownable {
         }
     }
 
-    function getCurrent() public view returns (ProxyCallable callable) {
-        callable = _callables[_current];
+    function getCurrent() public onlyOwner view returns (ProxyCallable callable) {
+        callable = ProxyCallable(0);
+        if (_callables.length > 0) {
+            callable = _callables[_current];
+        }
     }
 
 }

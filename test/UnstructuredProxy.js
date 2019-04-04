@@ -24,7 +24,7 @@ const Pet = artifacts.require("Pet");
 const PetBreed = artifacts.require("PetBreed");
 const Version = artifacts.require("Version");
 
-contract("UnstructuredProxy", function ([_, proxyOwner, owner]) {
+contract("UnstructuredProxy", function ([_, proxyOwner, owner, anyone]) {
 
     beforeEach(async () => {
       this.proxy = await UnstructuredProxy.new({ from: proxyOwner });
@@ -39,30 +39,34 @@ contract("UnstructuredProxy", function ([_, proxyOwner, owner]) {
     });
   
     it("Proxy callable is an uninitialized address", async () => {
-        await shouldFail.reverting(this.proxy.setProxyCallable(ZERO_ADDRESS, { from: proxyOwner }));
+        await shouldFail.reverting(this.proxy.setCallable(ZERO_ADDRESS, { from: proxyOwner }));
     });
 
     it("Proxy callable is a contract", async () => {
-        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+    });
+
+    it("Proxy callable is not a contract", async () => {
+        await shouldFail.reverting(this.proxy.setCallable(anyone, { from: proxyOwner }));
     });
 
     it("Proxy callable has been set", async () => {
-        const { logs } = await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
-        expectEvent.inLogs(logs, "UpgradedProxyCallable", {
+        const { logs } = await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+        expectEvent.inLogs(logs, "UpgradedCallable", {
             fromCallable: ZERO_ADDRESS,
             toCallable: this.petImpl.address,
         });
     });
 
     it("The new proxy callable can't be the current proxy callable", async () => {
-        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
-        await shouldFail.reverting(this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner }));
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+        await shouldFail.reverting(this.proxy.setCallable(this.petImpl.address, { from: proxyOwner }));
     });
 
     it("Proxy callable has been upgraded", async () => {
-        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
-        const { logs } = await this.proxy.setProxyCallable(this.petBreedImpl.address, { from: proxyOwner });
-        expectEvent.inLogs(logs, "UpgradedProxyCallable", {
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+        const { logs } = await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
+        expectEvent.inLogs(logs, "UpgradedCallable", {
             fromCallable: this.petImpl.address,
             toCallable: this.petBreedImpl.address,
         });

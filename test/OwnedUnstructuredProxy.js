@@ -20,6 +20,7 @@ const { ZERO_ADDRESS } = constants;
 const { expect } = require('chai');
 
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy");
+const ProxyManager = artifacts.require("ProxyManager");
 const Pet = artifacts.require("Pet");
 const PetBreed = artifacts.require("PetBreed");
 const Version = artifacts.require("Version");
@@ -41,15 +42,19 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
     });
 
     it("Proxy callable is an uninitialized address", async () => {
-        await shouldFail.reverting(this.proxy.setProxyCallable(ZERO_ADDRESS, { from: proxyOwner }));
+        await shouldFail.reverting(this.proxy.setCallable(ZERO_ADDRESS, { from: proxyOwner }));
     });
 
     it("Proxy callable is a contract", async () => {
-        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
     });
-  
+
+    it("Proxy callable is not a contract", async () => {
+        await shouldFail.reverting(this.proxy.setCallable(anyone, { from: proxyOwner }));
+    });
+
     it("Only a proxy owner can set an proxy callable", async () => {
-        await shouldFail.reverting(this.proxy.setProxyCallable(this.petImpl.address, { from: anotherProxyOwner }));
+        await shouldFail.reverting(this.proxy.setCallable(this.petImpl.address, { from: anotherProxyOwner }));
     });
 
     it("New proxy owner is an uninitialized address", async () => {
@@ -63,33 +68,94 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
     it("Proxy ownership has been transferred", async () => {
         const { logs } = await this.proxy.setTransferProxyOwnership(anotherProxyOwner, { from: proxyOwner });
         expectEvent.inLogs(logs, "ProxyOwnershipTransferred", {
-            previousProxyOwner: proxyOwner,
-            newProxyOwner: anotherProxyOwner,
+            previousOwner: proxyOwner,
+            newOwner: anotherProxyOwner,
         });
+        const manager = await ProxyManager.at(await this.proxy.getProxyManager({ from: anotherProxyOwner }));
+        expect(web3.utils.toChecksumAddress(this.proxy.address)).to.equal(web3.utils.toChecksumAddress(await manager.owner()));
     });
 
     it("Proxy callable has been set", async () => {
-        const { logs } = await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
-        expectEvent.inLogs(logs, "UpgradedProxyCallable", {
+        const { logs } = await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+        expectEvent.inLogs(logs, "UpgradedCallable", {
             fromCallable: ZERO_ADDRESS,
             toCallable: this.petImpl.address,
         });
     });
 
     it("Proxy callable has been upgraded", async () => {
-        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
-        const { logs } = await this.proxy.setProxyCallable(this.petBreedImpl.address, { from: proxyOwner });
-        expectEvent.inLogs(logs, "UpgradedProxyCallable", {
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+        const { logs } = await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
+        expectEvent.inLogs(logs, "UpgradedCallable", {
             fromCallable: this.petImpl.address,
             toCallable: this.petBreedImpl.address,
         });
     });
 
-    it("Change ownership", async () => {
-        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
-        await this.proxy.setProxyCallable(this.petBreedImpl.address, { from: proxyOwner });
+    it("Callable Change ownership", async () => {
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+        await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
         expect(web3.utils.toChecksumAddress(proxyOwner)).to.equal(web3.utils.toChecksumAddress(await this.pet.owner()));
         expect(web3.utils.toChecksumAddress(proxyOwner)).to.equal(web3.utils.toChecksumAddress(await this.petBreed.owner()));
+    });
+
+    it("Unknown current proxy callable", async () => {
+        const current = await this.proxy.getCallable({ from: proxyOwner });
+        expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(ZERO_ADDRESS));
+    });
+
+    it("Current proxy callable", async () => {
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+        const current = await this.proxy.getCallable({ from: proxyOwner });
+        expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(this.petImpl.address));
+    });
+
+    it("Set previous proxy callable", async () => {
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+        await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
+        const { logs } = await this.proxy.setPreviousCallable({ from: proxyOwner });
+        expectEvent.inLogs(logs, "UpgradedCallable", {
+            fromCallable: this.petBreedImpl.address,
+            toCallable: this.petImpl.address,
+        });
+        const current = await this.proxy.getCallable({ from: proxyOwner });
+        expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(this.petImpl.address));
+    });
+
+    it("Lower bound proxy callable", async () => {
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+        await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
+        await this.proxy.setPreviousCallable({ from: proxyOwner });
+        const { logs } = await this.proxy.setPreviousCallable({ from: proxyOwner });
+        expectEvent.inLogs(logs, "NotUpgradedCallable", {
+            callable: this.petImpl.address,
+        });
+        const current = await this.proxy.getCallable({ from: proxyOwner });
+        expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(this.petImpl.address));
+    });
+
+    it("Set next proxy callable", async () => {
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+        await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
+        await this.proxy.setPreviousCallable({ from: proxyOwner });
+        const { logs } = await this.proxy.setNextCallable({ from: proxyOwner });
+        expectEvent.inLogs(logs, "UpgradedCallable", {
+            fromCallable: this.petImpl.address,
+            toCallable: this.petBreedImpl.address,
+        });
+        const current = await this.proxy.getCallable({ from: proxyOwner });
+        expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(this.petBreedImpl.address));
+    });
+
+    it("Upper bound proxy callable", async () => {
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+        await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
+        const { logs } = await this.proxy.setNextCallable({ from: proxyOwner });
+        expectEvent.inLogs(logs, "NotUpgradedCallable", {
+            callable: this.petBreedImpl.address,
+        });
+        const current = await this.proxy.getCallable({ from: proxyOwner });
+        expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(this.petBreedImpl.address));
     });
 
 });

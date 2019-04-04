@@ -30,6 +30,8 @@ module.exports = function(deployer) {
     deployer.deploy(StringUtil);
     // Link Test
     deployer.link(AddressUtil, ParityHack);
+    deployer.link(AddressUtil, UnstructuredProxy);
+    deployer.link(AddressUtil, OwnedUnstructuredProxy);
     // Contract
     deployer.deploy(UnstructuredProxy);
     deployer.deploy(OwnedUnstructuredProxy);

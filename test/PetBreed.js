@@ -33,7 +33,7 @@ contract("PetBreed", function ([_, proxyOwner, owner]) {
     });
 
     it("Pet at proxy address getBreed() fail to call", async () => {
-        await this.proxy.setProxyCallable(this.petBreedImpl.address, { from: proxyOwner });
+        await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
         try {
             await this.pet.getBreed();
         } catch (exception) {
@@ -43,7 +43,7 @@ contract("PetBreed", function ([_, proxyOwner, owner]) {
     });
 
     it("PetBreed at proxy address getBreed() call", async () => {
-        await this.proxy.setProxyCallable(this.petBreedImpl.address, { from: proxyOwner });
+        await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
         try {
             await this.petBreed.getBreed();
         } catch (exception) {
@@ -51,22 +51,22 @@ contract("PetBreed", function ([_, proxyOwner, owner]) {
         }
     });
 
-    it("Change ownership", async () => {        
-        await this.proxy.setProxyCallable(this.petBreedImpl.address, { from: proxyOwner });
+    it("Change ownership", async () => {
+        await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
         expect(web3.utils.toChecksumAddress(await this.petBreedImpl.owner())).to.equal(web3.utils.toChecksumAddress(owner));
         expect(web3.utils.toChecksumAddress(proxyOwner)).to.equal(web3.utils.toChecksumAddress(await this.pet.owner()));
         expect(web3.utils.toChecksumAddress(proxyOwner)).to.equal(web3.utils.toChecksumAddress(await this.petBreed.owner()));
     });
 
     it("Pet Storage alignment", async () => {
-        await this.proxy.setProxyCallable(this.petImpl.address, { from: proxyOwner });
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         await this.petImpl.setColor("Brown", { from: owner });
         await this.pet.setColor("Blue", { from: proxyOwner });
         expect(await this.pet.getColor()).to.equal("Blue");
     });
 
     it("PetBreed Storage alignment", async () => {
-        await this.proxy.setProxyCallable(this.petBreedImpl.address, { from: proxyOwner });
+        await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
         await this.petBreedImpl.setColor("Brown", { from: owner });
         await this.pet.setColor("Blue", { from: proxyOwner });
         expect(await this.petBreed.getColor()).to.equal("Blue");

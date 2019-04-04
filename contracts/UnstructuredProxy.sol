@@ -20,6 +20,7 @@ pragma solidity ^0.5.5<0.7.0;
 
 import "./Proxy.sol";
 import "./ProxyCallable.sol";
+import "./utils/AddressUtil.sol";
 
 contract UnstructuredProxy is Proxy {
     /** 
@@ -28,11 +29,11 @@ contract UnstructuredProxy is Proxy {
     bytes32 private constant _callable = keccak256("org.maatech.proxy.callable");
 
     /**
-    * @dev This event will be emitted every time the proxy callable gets upgraded
+    * @dev This event will be emitted every time the callable gets upgraded
     * @param fromCallable represents the address of the previous proxy callable
-    * @param toCallable represents the address of the upgraded roy callable
+    * @param toCallable represents the address of the upgraded callable
     */
-    event UpgradedProxyCallable(address indexed fromCallable, address indexed toCallable);
+    event UpgradedCallable(address indexed fromCallable, address indexed toCallable);
 
     function _getVersion() internal returns (Version version) {
         version = new Version("UnstructuredProxy", "v0.0.1");
@@ -47,16 +48,17 @@ contract UnstructuredProxy is Proxy {
     }
 
     /**
-     * @dev Set the implementation
+     * @dev Set the proxy callable
      * @param toCallable proxy delegate callable
      */
-    function setProxyCallable(ProxyCallable toCallable) public {
+    function setCallable(ProxyCallable toCallable) public {
         address _toCallable = address(toCallable);
         require(_toCallable != address(0));
         address _fromCallable = _getCallable();
         require(_fromCallable != _toCallable);
-        emit UpgradedProxyCallable(_fromCallable, _toCallable);
+        require(AddressUtil.isContract(_toCallable));
         _setAddress(_callable, _toCallable);
+        emit UpgradedCallable(_fromCallable, _toCallable);
     }
 
 }

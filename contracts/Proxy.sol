@@ -22,7 +22,7 @@ import "./Version.sol";
 
 /**
  * @title Proxy
- * @dev Abstract Contract. Gives the possibility to delegate any call to a foreign implementation.
+ * @dev Abstract Contract. Gives the possibility to delegate any call to a foreign callable contract.
  */
 contract Proxy {
     /** 

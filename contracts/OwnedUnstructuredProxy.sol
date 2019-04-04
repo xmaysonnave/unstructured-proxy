@@ -27,12 +27,18 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      */
     bytes32 private constant _owner = keccak256("org.maatech.proxy.owner");
 
-    event ProxyOwnershipTransferred(address indexed previousProxyOwner, address indexed newProxyOwner);
+    event ProxyOwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     /**
      *  Contract Manager position
      */
     bytes32 private constant _manager = keccak256("org.maatech.proxy.manager");
+
+    /**
+    * @dev This event will be emitted every time the callable cannot be upgraded
+    * @param callable represents the address of the current callable
+    */
+    event NotUpgradedCallable(address indexed callable);
 
     /**
      * @dev Require if called by any account other than the proxy owner.
@@ -51,21 +57,25 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
         version = new Version("OwnedUnstructuredProxy", "v0.0.1");
     }
 
-    function setPreviousProxyCallable() public onlyProxyOwner {
+    function setPreviousCallable() public onlyProxyOwner {
         (ProxyCallable fromCallable, ProxyCallable toCallable) = ProxyManager(getProxyManager()).setPrevious();
         if (toCallable != ProxyCallable(0)) {
-            emit UpgradedProxyCallable(address(fromCallable), address(toCallable));
+            emit UpgradedCallable(address(fromCallable), address(toCallable));
+        } else {
+            emit NotUpgradedCallable(address(getCallable()));
         }
     }
 
-    function setNextProxyCallable() public onlyProxyOwner {
+    function setNextCallable() public onlyProxyOwner {
         (ProxyCallable fromCallable, ProxyCallable toCallable) = ProxyManager(getProxyManager()).setNext();
         if (toCallable != ProxyCallable(0)) {
-            emit UpgradedProxyCallable(address(fromCallable), address(toCallable));
+            emit UpgradedCallable(address(fromCallable), address(toCallable));
+        } else {
+            emit NotUpgradedCallable(address(getCallable()));
         }
     }
 
-    function getCurrentProxyCallable() public view onlyProxyOwner returns (ProxyCallable callable) {
+    function getCallable() public view onlyProxyOwner returns (ProxyCallable callable) {
         callable = ProxyManager(getProxyManager()).getCurrent();
     }
 
@@ -73,23 +83,23 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @dev Tells the address of the current version
      * @return address of the current version
      */
-    function getProxyManager() public view onlyProxyOwner returns (address manager) {
-        manager = _getAddress(_manager);
+    function getProxyManager() public view onlyProxyOwner returns (ProxyManager manager) {
+        manager = ProxyManager(_getAddress(_manager));
     }
 
     /**
      * @dev Set the Proxy Callable
      * @param toCallable proxy callable delegate
      */
-    function setProxyCallable(ProxyCallable toCallable) public onlyProxyOwner {
-        super.setProxyCallable(toCallable);
+    function setCallable(ProxyCallable toCallable) public onlyProxyOwner {
+        super.setCallable(toCallable);
         address proxyOwner = getProxyOwner();
         // call fallback to delegatecall initialize and set owner
         (bool success, ) = address(this).call(
             abi.encodeWithSignature("initialize(address)", proxyOwner, proxyOwner)
         );
         require(success);
-        ProxyManager(getProxyManager()).add(toCallable);
+        getProxyManager().add(toCallable);
     }
 
     /**
@@ -127,10 +137,11 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @param newOwner The address to transfer ownership to.
      */
     function _setTransferProxyOwnership(address newOwner) internal {
+        address previousOwner = getProxyOwner();
         require(newOwner != address(0));
-        require(newOwner != getProxyOwner());
-        emit ProxyOwnershipTransferred(getProxyOwner(), newOwner);
+        require(newOwner != previousOwner);
         _setAddress(_owner, newOwner);
+        emit ProxyOwnershipTransferred(previousOwner, newOwner);
     }
 
 }
