@@ -83,17 +83,16 @@ contract Proxy {
         address _callable = _getCallable();
         require(_callable != address(0));
         assembly {
-            let pointer := mload(0x40)
-            calldatacopy(pointer, 0, calldatasize)
-            let result := delegatecall(gas, _callable, pointer, calldatasize, 0, 0)
+            calldatacopy(0, 0, calldatasize)
+            let result := delegatecall(gas, _callable, 0, calldatasize, 0, 0)
             let size := returndatasize
-            returndatacopy(pointer, 0, size)
+            returndatacopy(0, 0, size)
             switch result
                 case 0 {
-                    revert(pointer, size)
+                    revert(0, size)
                 }
                 default {
-                    return(pointer, size)
+                    return(0, size)
                 }
         }
     }
