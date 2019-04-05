@@ -22,7 +22,7 @@ import "./Pet.sol";
 
 contract PetBreed is Pet {
     Version private _version = new Version("PetBreed", "v0.0.1");
-    string internal _breed = "Undefined";
+    string internal _breed = "undefined";
 
     function getVersion() public returns (Version version) {
         version = _version;
@@ -33,7 +33,7 @@ contract PetBreed is Pet {
     }
 
     function setBreed(string memory breed) public onlyOwner {
-        require(bytes(breed).length != 0);
+        require(bytes(breed).length != 0, "undefined breed");
         _breed = breed;
     }
 

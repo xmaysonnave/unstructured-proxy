@@ -53,10 +53,10 @@ contract UnstructuredProxy is Proxy {
      */
     function setCallable(ProxyCallable toCallable) public {
         address _toCallable = address(toCallable);
-        require(_toCallable != address(0));
+        require(_toCallable != address(0), "can't be address zero");
         address _fromCallable = _getCallable();
-        require(_fromCallable != _toCallable);
-        require(AddressUtil.isContract(_toCallable));
+        require(_fromCallable != _toCallable,  "can't be the same callable");
+        require(AddressUtil.isContract(_toCallable), "not a contract");
         _setAddress(_callable, _toCallable);
         emit UpgradedCallable(_fromCallable, _toCallable);
     }

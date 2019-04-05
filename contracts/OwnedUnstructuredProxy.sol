@@ -46,7 +46,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * to the callable.
      */
     modifier onlyProxyOwner() {
-        require(_isProxyOwner());
+        require(_isProxyOwner(), "onlyProxyOwner");
         _;
     }
 
@@ -100,7 +100,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
         (bool success, ) = address(this).call(
             abi.encodeWithSignature("initialize(address)", owner, owner)
         );
-        require(success);
+        require(success, "call failed");
         ProxyManager(getProxyManager()).add(toCallable);
     }
 
@@ -140,8 +140,8 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      */
     function _setTransferProxyOwnership(address newOwner) internal {
         address previousOwner = getProxyOwner();
-        require(newOwner != address(0));
-        require(newOwner != previousOwner);
+        require(newOwner != address(0), "can't be address zero");
+        require(newOwner != previousOwner, "can't be the same owner");
         _setAddress(_owner, newOwner);
         emit ProxyOwnershipTransferred(previousOwner, newOwner);
     }
@@ -150,7 +150,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
      * @dev Only fall back when the sender is not the proxy owner.
      */
     function () external payable {
-        require(_isProxyOwner() == false);
+        require(_isProxyOwner() == false, "proxy owner is not allowed to fallback");
         _fallback();
     }
 

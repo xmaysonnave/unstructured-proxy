@@ -22,8 +22,8 @@ import "../ProxyCallable.sol";
 
 contract Pet is ProxyCallable {
     Version private _version = new Version("Pet", "v0.0.1");
-    string private _kind = "Undefined";
-    string private _color = "Undefined";
+    string private _kind = "undefined";
+    string private _color = "undefined";
 
     function getVersion() public returns (Version version) {
         version = _version;
@@ -34,7 +34,7 @@ contract Pet is ProxyCallable {
     }
 
     function setKind(string memory kind) public onlyOwner {
-        require(bytes(kind).length != 0);
+        require(bytes(kind).length != 0, "undefined kind");
         _kind = kind;
     }
 
@@ -43,7 +43,7 @@ contract Pet is ProxyCallable {
     }
 
     function setColor(string memory color) public onlyOwner {
-        require(bytes(color).length != 0);
+        require(bytes(color).length != 0, "undefined color");
         _color = color;
     }
 

@@ -17,15 +17,16 @@
  */
 pragma solidity ^0.5.5<0.7.0;
 
-contract Version {
+import "./Ownable.sol";
+
+contract Version is Ownable {
     bytes32 private _id;
     string private _name;
     string private _tag;
 
     constructor(string memory name, string memory tag) public {
-        require(bytes(name).length != 0);
-        require(bytes(name).length != 0);
-        require(bytes(tag).length != 0);
+        require(bytes(name).length != 0, "undefined name");
+        require(bytes(tag).length != 0, "undefined tag");
         _id = keccak256(abi.encode(name, tag));
         _name = name;
         _tag = tag;

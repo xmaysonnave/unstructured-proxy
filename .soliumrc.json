@@ -4,7 +4,6 @@
         "security"
     ],
     "rules": {
-        "error-reason": "off",
         "indentation": [
             "error",
             4

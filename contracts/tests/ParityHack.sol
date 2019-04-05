@@ -28,8 +28,8 @@ contract ParityHack {
     address private _target;
 
     modifier isValid() {
-        require(_target != address(0));
-        require(AddressUtil.isContract(_target) == true);
+        require(_target != address(0), "can't be address zero");
+        require(AddressUtil.isContract(_target) == true, "not a contract");
         _;
     }
 

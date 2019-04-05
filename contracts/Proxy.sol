@@ -59,8 +59,8 @@ contract Proxy {
      * @param _contract contract address
      */
     function _setAddress(bytes32 _position, address _contract) internal {
-        require(_position != bytes32(0));
-        require(_contract != address(0));
+        require(_position != bytes32(0), "undefined position");
+        require(_contract != address(0), "can't be address zero");
         bytes32 position = _position;
         assembly {
             sstore(position, _contract)
@@ -96,7 +96,7 @@ contract Proxy {
      * This function will return whatever the callable call returns
      */
     function _delegate(address callable) internal {
-        require(callable != address(0));
+        require(callable != address(0), "can't be address zero");
         assembly {
             calldatacopy(0, 0, calldatasize)
             let result := delegatecall(gas, callable, 0, calldatasize, 0, 0)
