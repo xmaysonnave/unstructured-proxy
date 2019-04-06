@@ -29,6 +29,25 @@ contract ProxyManager is Ownable {
         _current = _callables.push(callable) - 1;
     }
 
+    function getCurrent() public view onlyOwner returns (ProxyCallable callable) {
+        callable = ProxyCallable(0);
+        if (_callables.length > 0) {
+            callable = _callables[_current];
+        }
+    }
+
+    function set(uint id) public onlyOwner returns (ProxyCallable fromCallable, ProxyCallable toCallable) {
+        fromCallable = getCurrent();
+        toCallable = ProxyCallable(0);
+        for (uint current = 0; current < _callables.length; current++) {
+            if (_callables[current].getVersion().getId() == id) {
+                toCallable = _callables[current];
+                _current = current;
+                break;
+            }
+        }
+    }
+
     function setPrevious() public onlyOwner returns (ProxyCallable fromCallable, ProxyCallable toCallable) {
         fromCallable = getCurrent();
         toCallable = ProxyCallable(0);
@@ -42,13 +61,6 @@ contract ProxyManager is Ownable {
         toCallable = ProxyCallable(0);
         if (_current + 1 < _callables.length) {
             toCallable = _callables[++_current];
-        }
-    }
-
-    function getCurrent() public onlyOwner view returns (ProxyCallable callable) {
-        callable = ProxyCallable(0);
-        if (_callables.length > 0) {
-            callable = _callables[_current];
         }
     }
 

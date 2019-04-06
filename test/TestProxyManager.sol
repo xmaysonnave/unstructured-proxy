@@ -83,4 +83,20 @@ contract TestProxyManager {
         Assert.equal(address(callable), address(petBreed), "not matching");
     }
 
+    function testSet() public {
+        (ProxyCallable fromCallable, ProxyCallable toCallable) = manager.set(pet.getVersion().getId());
+        Assert.equal(address(fromCallable), address(petBreed), "not matching");
+        Assert.equal(address(toCallable), address(pet), "not matching");
+        ProxyCallable callable = manager.getCurrent();
+        Assert.equal(address(callable), address(pet), "not matching");
+    }
+
+    function testSetUnknown() public {
+        (ProxyCallable fromCallable, ProxyCallable toCallable) = manager.set(uint(uint256(keccak256(abi.encode(block.difficulty, now)))));
+        Assert.equal(address(fromCallable), address(pet), "not matching");
+        Assert.equal(address(toCallable), address(0), "not matching");
+        ProxyCallable callable = manager.getCurrent();
+        Assert.equal(address(callable), address(pet), "not matching");
+    }
+
 }
