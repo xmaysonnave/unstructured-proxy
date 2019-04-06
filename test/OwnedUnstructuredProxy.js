@@ -34,25 +34,25 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
         this.petBreed = await PetBreed.at(this.proxy.address);
     });
 
-    it("ContractVersion", async () => {
+    it("Contract version", async () => {
         const version = await Version.at(await this.proxy.getVersion());
         expect(await version.getName()).to.equal("OwnedUnstructuredProxy");
         expect(await version.getTag()).to.equal("v0.0.1");
     });
 
-    it("Proxy callable is an uninitialized address", async () => {
+    it("Callable is an uninitialized address", async () => {
         await shouldFail.reverting(this.proxy.setCallable(ZERO_ADDRESS, { from: proxyOwner }));
     });
 
-    it("Proxy callable is a contract", async () => {
+    it("Callable is a contract", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
     });
 
-    it("Proxy callable is not a contract", async () => {
+    it("Callable is not a contract", async () => {
         await shouldFail.reverting(this.proxy.setCallable(anyone, { from: proxyOwner }));
     });
 
-    it("Only a proxy owner can set an proxy callable", async () => {
+    it("Only a proxy owner can set a callable", async () => {
         await shouldFail.reverting(this.proxy.setCallable(this.petImpl.address, { from: anotherProxyOwner }));
     });
 
@@ -74,7 +74,7 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
         // expect(web3.utils.toChecksumAddress(this.proxy.address)).to.equal(web3.utils.toChecksumAddress(await manager.owner()));
     });
 
-    it("Proxy callable has been set", async () => {
+    it("Callable has been set", async () => {
         const { logs } = await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         expectEvent.inLogs(logs, "UpgradedCallable", {
             fromCallable: ZERO_ADDRESS,
@@ -82,7 +82,7 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
         });
     });
 
-    it("Proxy callable has been upgraded", async () => {
+    it("Callable has been upgraded", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         const { logs } = await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
         expectEvent.inLogs(logs, "UpgradedCallable", {
@@ -98,18 +98,18 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
         expect(web3.utils.toChecksumAddress(owner)).to.equal(web3.utils.toChecksumAddress(await this.petBreed.owner()));
     });
 
-    it("Unknown current proxy callable", async () => {
+    it("Unknown current callable", async () => {
         const current = await this.proxy.getCallable({ from: proxyOwner });
         expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(ZERO_ADDRESS));
     });
 
-    it("Current proxy callable", async () => {
+    it("Current callable", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         const current = await this.proxy.getCallable({ from: proxyOwner });
         expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(this.petImpl.address));
     });
 
-    it("Set previous proxy callable", async () => {
+    it("Set previous callable", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
         const { logs } = await this.proxy.setPreviousCallable({ from: proxyOwner });
@@ -121,7 +121,7 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
         expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(this.petImpl.address));
     });
 
-    it("Lower bound proxy callable", async () => {
+    it("Lower bound callable", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
         await this.proxy.setPreviousCallable({ from: proxyOwner });
@@ -133,7 +133,7 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
         expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(this.petImpl.address));
     });
 
-    it("Set next proxy callable", async () => {
+    it("Set next callable", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
         await this.proxy.setPreviousCallable({ from: proxyOwner });
@@ -146,10 +146,34 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
         expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(this.petBreedImpl.address));
     });
 
-    it("Upper bound proxy callable", async () => {
+    it("Upper bound callable", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
         const { logs } = await this.proxy.setNextCallable({ from: proxyOwner });
+        expectEvent.inLogs(logs, "NotUpgradedCallable", {
+            callable: this.petBreedImpl.address,
+        });
+        const current = await this.proxy.getCallable({ from: proxyOwner });
+        expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(this.petBreedImpl.address));
+    });
+
+    it("Set callable", async () => {
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+        await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
+        const version = await Version.at(await this.petImpl.getVersion());
+        const { logs } = await this.proxy.setCallableById(await version.getId(), { from: proxyOwner });
+        expectEvent.inLogs(logs, "UpgradedCallable", {
+            fromCallable: this.petBreedImpl.address,
+            toCallable: this.petImpl.address, 
+        });
+        const current = await this.proxy.getCallable({ from: proxyOwner });
+        expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(this.petImpl.address));
+    });
+
+    it("Set unknown callable", async () => {
+        await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
+        await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
+        const { logs } = await this.proxy.setCallableById(0, { from: proxyOwner });
         expectEvent.inLogs(logs, "NotUpgradedCallable", {
             callable: this.petBreedImpl.address,
         });

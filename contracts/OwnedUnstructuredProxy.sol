@@ -60,7 +60,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
     }
 
     function setPreviousCallable() public onlyProxyOwner {
-        (ProxyCallable fromCallable, ProxyCallable toCallable) = ProxyManager(getProxyManager()).setPrevious();
+        (ProxyCallable fromCallable, ProxyCallable toCallable) = ProxyManager(getProxyManager()).setPreviousCallable();
         if (toCallable != ProxyCallable(0)) {
             emit UpgradedCallable(address(fromCallable), address(toCallable));
         } else {
@@ -69,7 +69,16 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
     }
 
     function setNextCallable() public onlyProxyOwner {
-        (ProxyCallable fromCallable, ProxyCallable toCallable) = ProxyManager(getProxyManager()).setNext();
+        (ProxyCallable fromCallable, ProxyCallable toCallable) = ProxyManager(getProxyManager()).setNextCallable();
+        if (toCallable != ProxyCallable(0)) {
+            emit UpgradedCallable(address(fromCallable), address(toCallable));
+        } else {
+            emit NotUpgradedCallable(address(getCallable()));
+        }
+    }
+
+    function setCallableById(uint id) public onlyProxyOwner {
+        (ProxyCallable fromCallable, ProxyCallable toCallable) = ProxyManager(getProxyManager()).setCallable(id);
         if (toCallable != ProxyCallable(0)) {
             emit UpgradedCallable(address(fromCallable), address(toCallable));
         } else {
@@ -78,7 +87,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
     }
 
     function getCallable() public view onlyProxyOwner returns (ProxyCallable callable) {
-        callable = ProxyManager(getProxyManager()).getCurrent();
+        callable = ProxyManager(getProxyManager()).getCurrentCallable();
     }
 
     /**
@@ -101,7 +110,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
             abi.encodeWithSignature("initialize(address)", owner, owner)
         );
         require(success, "call failed");
-        ProxyManager(getProxyManager()).add(toCallable);
+        ProxyManager(getProxyManager()).addCallable(toCallable);
     }
 
     /**

@@ -29,6 +29,6 @@ contract ProxyCallable is Ownable {
         }
     }
 
-    function getVersion() public returns (Version version);
+    function getVersion() public view returns (Version version);
 
 }

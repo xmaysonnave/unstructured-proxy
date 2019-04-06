@@ -25,19 +25,19 @@ contract ProxyManager is Ownable {
     uint private _current;
     ProxyCallable[] private _callables;
 
-    function add(ProxyCallable callable) public onlyOwner {
+    function addCallable(ProxyCallable callable) public onlyOwner {
         _current = _callables.push(callable) - 1;
     }
 
-    function getCurrent() public view onlyOwner returns (ProxyCallable callable) {
+    function getCurrentCallable() public view onlyOwner returns (ProxyCallable callable) {
         callable = ProxyCallable(0);
         if (_callables.length > 0) {
             callable = _callables[_current];
         }
     }
 
-    function set(uint id) public onlyOwner returns (ProxyCallable fromCallable, ProxyCallable toCallable) {
-        fromCallable = getCurrent();
+    function setCallable(uint id) public onlyOwner returns (ProxyCallable fromCallable, ProxyCallable toCallable) {
+        fromCallable = getCurrentCallable();
         toCallable = ProxyCallable(0);
         for (uint current = 0; current < _callables.length; current++) {
             if (_callables[current].getVersion().getId() == id) {
@@ -48,16 +48,16 @@ contract ProxyManager is Ownable {
         }
     }
 
-    function setPrevious() public onlyOwner returns (ProxyCallable fromCallable, ProxyCallable toCallable) {
-        fromCallable = getCurrent();
+    function setPreviousCallable() public onlyOwner returns (ProxyCallable fromCallable, ProxyCallable toCallable) {
+        fromCallable = getCurrentCallable();
         toCallable = ProxyCallable(0);
         if (_current > 0) {
             toCallable = _callables[--_current];
         }
     }
 
-    function setNext() public onlyOwner returns (ProxyCallable fromCallable, ProxyCallable toCallable) {
-        fromCallable = getCurrent();
+    function setNextCallable() public onlyOwner returns (ProxyCallable fromCallable, ProxyCallable toCallable) {
+        fromCallable = getCurrentCallable();
         toCallable = ProxyCallable(0);
         if (_current + 1 < _callables.length) {
             toCallable = _callables[++_current];

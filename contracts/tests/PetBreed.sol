@@ -24,11 +24,11 @@ contract PetBreed is Pet {
     Version private _version = new Version("PetBreed", "v0.0.1");
     string internal _breed = "undefined";
 
-    function getVersion() public returns (Version version) {
+    function getVersion() public view returns (Version version) {
         version = _version;
     }
 
-    function getBreed() external view returns (string memory breed) {
+    function getBreed() public view returns (string memory breed) {
         breed = _breed;
     }
 

@@ -25,7 +25,7 @@ contract Pet is ProxyCallable {
     string private _kind = "undefined";
     string private _color = "undefined";
 
-    function getVersion() public returns (Version version) {
+    function getVersion() public view returns (Version version) {
         version = _version;
     }
 

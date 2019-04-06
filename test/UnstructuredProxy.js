@@ -38,19 +38,19 @@ contract("UnstructuredProxy", function ([_, proxyOwner, owner, anyone]) {
         expect(await version.getTag()).to.equal("v0.0.1");
     });
   
-    it("Proxy callable is an uninitialized address", async () => {
+    it("Callable is an uninitialized address", async () => {
         await shouldFail.reverting(this.proxy.setCallable(ZERO_ADDRESS, { from: proxyOwner }));
     });
 
-    it("Proxy callable is a contract", async () => {
+    it("Callable is a contract", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
     });
 
-    it("Proxy callable is not a contract", async () => {
+    it("Callable is not a contract", async () => {
         await shouldFail.reverting(this.proxy.setCallable(anyone, { from: proxyOwner }));
     });
 
-    it("Proxy callable has been set", async () => {
+    it("Callable has been set", async () => {
         const { logs } = await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         expectEvent.inLogs(logs, "UpgradedCallable", {
             fromCallable: ZERO_ADDRESS,
@@ -58,12 +58,12 @@ contract("UnstructuredProxy", function ([_, proxyOwner, owner, anyone]) {
         });
     });
 
-    it("The new proxy callable can't be the current proxy callable", async () => {
+    it("The new callable can't be the current callable", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         await shouldFail.reverting(this.proxy.setCallable(this.petImpl.address, { from: proxyOwner }));
     });
 
-    it("Proxy callable has been upgraded", async () => {
+    it("Callable has been upgraded", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         const { logs } = await this.proxy.setCallable(this.petBreedImpl.address, { from: proxyOwner });
         expectEvent.inLogs(logs, "UpgradedCallable", {
