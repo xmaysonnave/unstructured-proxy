@@ -16,7 +16,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5<0.7.0;
+pragma solidity >=0.5.5 <0.6.0;
 
 import "./ProxyManager.sol";
 import "./UnstructuredProxy.sol";
@@ -106,9 +106,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
         super.setCallable(toCallable);
         address owner = toCallable.owner();
         // fallback to initialize and set owner as callable contract owner
-        (bool success, ) = address(this).call(
-            abi.encodeWithSignature("initialize(address)", owner, owner)
-        );
+        (bool success, ) = address(this).call(abi.encodeWithSignature("initialize(address)", owner, owner));
         require(success, "call failed");
         ProxyManager(getProxyManager()).addCallable(toCallable);
     }
@@ -158,7 +156,7 @@ contract OwnedUnstructuredProxy is UnstructuredProxy {
     /**
      * @dev Only fall back when the sender is not the proxy owner.
      */
-    function () external payable {
+    function() external payable {
         require(_isProxyOwner() == false, "proxy owner is not allowed to fallback");
         _fallback();
     }

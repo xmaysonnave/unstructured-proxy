@@ -16,7 +16,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5<0.7.0;
+pragma solidity >=0.5.5 <0.6.0;
 
 import "./Proxy.sol";
 import "./ProxyCallable.sol";
@@ -55,7 +55,7 @@ contract UnstructuredProxy is Proxy {
         address _toCallable = address(toCallable);
         require(_toCallable != address(0), "can't be address zero");
         address _fromCallable = _getCallable();
-        require(_fromCallable != _toCallable,  "can't be the same callable");
+        require(_fromCallable != _toCallable, "can't be the same callable");
         require(AddressUtil.isContract(_toCallable), "not a contract");
         _setAddress(_callable, _toCallable);
         emit UpgradedCallable(_fromCallable, _toCallable);

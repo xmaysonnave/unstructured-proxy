@@ -16,7 +16,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-pragma solidity ^0.5.5<0.7.0;
+pragma solidity >=0.5.5 <0.6.0;
 
 import "./Version.sol";
 
@@ -79,7 +79,7 @@ contract Proxy {
      * @dev Fallback function.
      * Implemented entirely in _fallback.
      */
-    function () external payable {
+    function() external payable {
         _fallback();
     }
 
