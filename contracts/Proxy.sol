@@ -97,9 +97,9 @@ contract Proxy {
      */
     function _delegate(address callable) internal {
         require(callable != address(0), "can't be address zero");
-        assembly {
-            calldatacopy(0, 0, calldatasize)
-            let result := delegatecall(gas, callable, 0, calldatasize, 0, 0)
+        assembly { // solium-disable-line
+            calldatacopy(0x0, 0x0, calldatasize)
+            let result := delegatecall(sub(gas, 10000), callable, 0x0, calldatasize, 0, 0)
             let size := returndatasize
             returndatacopy(0, 0, size)
             switch result

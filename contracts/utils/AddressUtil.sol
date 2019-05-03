@@ -24,22 +24,28 @@ library AddressUtil {
      *  A contract does not have source code available during construction, its address return zero.
      */
     function isContract(address _address) public view returns (bool _isContract) {
-        uint256 _size;
-        assembly {
-            _size := extcodesize(_address)
+        _isContract = false;
+        if (_address != address(0)) {
+            uint256 _size;
+            assembly {
+                _size := extcodesize(_address)
+            }
+            _isContract = _size > 0;
         }
-        _isContract = _size > 0;
     }
 
     /*
-     *  @dev Returns true if the function is running in the constructor
+     *  @dev Returns true if the _address is running in the constructor
      */
-    function isConstructor(address method) public view returns (bool result) {
-        uint256 size;
-        assembly {
-            size := extcodesize(method)
+    function isConstructor(address _address) public view returns (bool _isConstructor) {
+        _isConstructor = false;
+        if (_address != address(0)) {
+            uint256 size;
+            assembly {
+                size := extcodesize(_address)
+            }
+            _isConstructor = size == 0;
         }
-        result = size == 0;
     }
 
 }

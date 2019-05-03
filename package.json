@@ -25,14 +25,14 @@
     "ethereumjs-abi": "^0.6.7",
     "ethlint": "^1.2.4",
     "openzeppelin-solidity": "^2.2.0",
-    "openzeppelin-test-helpers": "^0.3.1",
-    "prettier": "^1.16.4",
+    "openzeppelin-test-helpers": "^0.3.2",
+    "prettier": "^1.17.0",
     "prettier-plugin-solidity": "^1.0.0-alpha.22",
     "solc": "^0.5.7",
     "solidity-coverage": "^0.5.11",
     "solium": "^1.2.4",
     "solium-plugin-security": "^0.1.1",
-    "truffle": "^5.0.11",
+    "truffle": "^5.0.14",
     "web3": "^1.0.0-beta.52"
   },
   "dependencies": {}

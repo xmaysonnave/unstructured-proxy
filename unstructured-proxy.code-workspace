@@ -7,6 +7,7 @@
     "settings": {
         "solidity.compileUsingRemoteVersion" : "0.5.7+commit.6da8b019",
         "solidity.enabledAsYouTypeCompilationErrorCheck": true,
-        "solidity.validationDelay": 1500
+        "solidity.validationDelay": 1500,
+        "npm.enableScriptExplorer": true
     }
 }
