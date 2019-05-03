@@ -88,14 +88,14 @@ contract Proxy {
     * Extracted to enable manual triggering.
     */
     function _fallback() internal {
-        _delegate(_getCallable());
+        _fallbackDelegate(_getCallable());
     }
 
     /**
      * @dev Fallback function allowing to perform a delegatecall to the given callable.
      * This function will return whatever the callable call returns
      */
-    function _delegate(address callable) internal {
+    function _fallbackDelegate(address callable) internal {
         require(callable != address(0), "can't be address zero");
         assembly { // solium-disable-line
             calldatacopy(0x0, 0x0, calldatasize)
