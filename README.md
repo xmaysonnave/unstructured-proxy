@@ -1,7 +1,7 @@
 # Unstructured-proxy
 <a name="unstructured-proxy"/>
 
-```unstructured-proxy``` is a prototype who addresses some limitations existing in the [OpenZeppelin-sdk](https://github.com/OpenZeppelin/openzeppelin-sdk) implementation. It was my full first prototype in Solidity and Web3 who let me dig deaply the way Ethereum Smart Contracts are working. The code is compiled against the Solidity 0.5. compiler.
+```unstructured-proxy``` is a prototype who addresses some limitations existing in the [OpenZeppelin-sdk](https://github.com/OpenZeppelin/openzeppelin-sdk) implementation. It was my full first prototype in Solidity and Web3 who let me dig deeply the way Ethereum Smart Contracts are working. The code is compiled against the Solidity 0.5.X compiler.
 
 ## Authors
 <a name="authors"/>
