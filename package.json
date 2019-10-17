@@ -18,7 +18,7 @@
   "lint": "./node_modules/.bin/solium -d contracts --fix",
   "coverage": "./node_modules/.bin/solidity-coverage",
   "author": "Xavier Maysonnave",
-  "license": "GPL V3",
+  "license": "MIT",
   "devDependencies": {
     "ganache-cli": "6.7.0",
     "chai": "^4.2.0",
