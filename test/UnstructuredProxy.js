@@ -15,8 +15,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-const { constants, expectEvent, shouldFail } = require("openzeppelin-test-helpers");
-const { ZERO_ADDRESS } = constants;
+const { constants, expectEvent, expectRevert } = require("@openzeppelin/test-helpers");
 const { expect } = require("chai");
 
 const UnstructuredProxy = artifacts.require("UnstructuredProxy");
@@ -39,7 +38,7 @@ contract("UnstructuredProxy", function ([_, proxyOwner, owner, anyone]) {
     });
   
     it("Callable is an uninitialized address", async () => {
-        await shouldFail.reverting(this.proxy.setCallable(ZERO_ADDRESS, { from: proxyOwner }));
+        await expectRevert.unspecified(this.proxy.setCallable(constants.ZERO_ADDRESS, { from: proxyOwner }));
     });
 
     it("Callable is a contract", async () => {
@@ -47,20 +46,20 @@ contract("UnstructuredProxy", function ([_, proxyOwner, owner, anyone]) {
     });
 
     it("Callable is not a contract", async () => {
-        await shouldFail.reverting(this.proxy.setCallable(anyone, { from: proxyOwner }));
+        await expectRevert.unspecified(this.proxy.setCallable(anyone, { from: proxyOwner }));
     });
 
     it("Callable has been set", async () => {
         const { logs } = await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         expectEvent.inLogs(logs, "UpgradedCallable", {
-            fromCallable: ZERO_ADDRESS,
+            fromCallable: constants.ZERO_ADDRESS,
             toCallable: this.petImpl.address,
         });
     });
 
     it("The new callable can't be the current callable", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
-        await shouldFail.reverting(this.proxy.setCallable(this.petImpl.address, { from: proxyOwner }));
+        await expectRevert.unspecified(this.proxy.setCallable(this.petImpl.address, { from: proxyOwner }));
     });
 
     it("Callable has been upgraded", async () => {

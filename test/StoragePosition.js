@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-const { shouldFail } = require("openzeppelin-test-helpers");
+const { expectRevert } = require("@openzeppelin/test-helpers");
 const { expect } = require("chai");
 
 const encodedMethod = require("./helpers/encodedMethod")
@@ -40,13 +40,13 @@ contract("StoragePosition", ([_, proxyOwner, owner]) => {
     it("Only owner proxy callable storage position fallback call", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         const data = encodedMethod.call("setColor", ["string"], ["Brown"]);
-        await shouldFail.reverting(web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: data }));
+        await expectRevert.unspecified(web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: data }));
     });
 
     it("Mandatory Value proxy callable storage position fallback call", async () => {
         await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         const data = encodedMethod.call("setColor", ["string"], [""]);
-        await shouldFail.reverting(web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: data }));
+        await expectRevert.unspecified(web3.eth.sendTransaction({ from: proxyOwner, to: this.proxy.address, data: data }));
     });    
 
     it("Value proxy callable storage position fallback call", async () => {

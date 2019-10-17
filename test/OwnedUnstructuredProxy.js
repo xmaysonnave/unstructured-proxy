@@ -15,8 +15,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-const { constants, expectEvent, shouldFail } = require("openzeppelin-test-helpers");
-const { ZERO_ADDRESS } = constants;
+const { constants, expectEvent, expectRevert } = require("@openzeppelin/test-helpers");
 const { expect } = require('chai');
 
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy");
@@ -41,7 +40,7 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
     });
 
     it("Callable is an uninitialized address", async () => {
-        await shouldFail.reverting(this.proxy.setCallable(ZERO_ADDRESS, { from: proxyOwner }));
+        await expectRevert.unspecified(this.proxy.setCallable(constants.ZERO_ADDRESS, { from: proxyOwner }));
     });
 
     it("Callable is a contract", async () => {
@@ -49,19 +48,19 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
     });
 
     it("Callable is not a contract", async () => {
-        await shouldFail.reverting(this.proxy.setCallable(anyone, { from: proxyOwner }));
+        await expectRevert.unspecified(this.proxy.setCallable(anyone, { from: proxyOwner }));
     });
 
     it("Only a proxy owner can set a callable", async () => {
-        await shouldFail.reverting(this.proxy.setCallable(this.petImpl.address, { from: anotherProxyOwner }));
+        await expectRevert.unspecified(this.proxy.setCallable(this.petImpl.address, { from: anotherProxyOwner }));
     });
 
     it("New proxy owner is an uninitialized address", async () => {
-        await shouldFail.reverting(this.proxy.setTransferProxyOwnership(ZERO_ADDRESS, { from: proxyOwner }));
+        await expectRevert.unspecified(this.proxy.setTransferProxyOwnership(constants.ZERO_ADDRESS, { from: proxyOwner }));
     });
 
     it("New proxy owner can't be the current proxy owner", async () => {
-        await shouldFail.reverting(this.proxy.setTransferProxyOwnership(proxyOwner, { from: proxyOwner }));
+        await expectRevert.unspecified(this.proxy.setTransferProxyOwnership(proxyOwner, { from: proxyOwner }));
     });
 
     it("Proxy ownership has been transferred", async () => {
@@ -77,7 +76,7 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
     it("Callable has been set", async () => {
         const { logs } = await this.proxy.setCallable(this.petImpl.address, { from: proxyOwner });
         expectEvent.inLogs(logs, "UpgradedCallable", {
-            fromCallable: ZERO_ADDRESS,
+            fromCallable: constants.ZERO_ADDRESS,
             toCallable: this.petImpl.address,
         });
     });
@@ -100,7 +99,7 @@ contract("OwnedUnstructuredProxy", function ([_, proxyOwner, owner, anotherProxy
 
     it("Unknown current callable", async () => {
         const current = await this.proxy.getCallable({ from: proxyOwner });
-        expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(ZERO_ADDRESS));
+        expect(web3.utils.toChecksumAddress(current)).to.equal(web3.utils.toChecksumAddress(constants.ZERO_ADDRESS));
     });
 
     it("Current callable", async () => {

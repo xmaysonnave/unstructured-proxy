@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-const { shouldFail } = require("openzeppelin-test-helpers");
+const { expectRevert } = require("@openzeppelin/test-helpers");
 
 const encodedMethod = require("./helpers/encodedMethod");
 const OwnedUnstructuredProxy = artifacts.require("OwnedUnstructuredProxy");
@@ -34,14 +34,14 @@ contract("ParityHack", function ([_, proxyOwner, hackerOwner, owner]) {
     it("Implementation is not set", async () => {
         await this.hacker.setTarget(this.proxy.address);
         const data = encodedMethod.call("initialize", ["address"], [hackerOwner]);
-        await shouldFail.reverting(web3.eth.sendTransaction({ from: hackerOwner, to: this.hacker.address, data: data }));
-        await shouldFail.reverting(web3.eth.sendTransaction({ from: hackerOwner, to: this.petBreed.address, data: data }));
+        await expectRevert.unspecified(web3.eth.sendTransaction({ from: hackerOwner, to: this.hacker.address, data: data }));
+        await expectRevert.unspecified(web3.eth.sendTransaction({ from: hackerOwner, to: this.petBreed.address, data: data }));
     });
 
     it("Cannot change owner", async () => {
         await this.hacker.setTarget(this.petBreedImpl.address); 
         const dataTransfer = encodedMethod.call("transferOwnership", ["address"], [hackerOwner]);
-        await shouldFail.reverting(web3.eth.sendTransaction({ from: hackerOwner, to: this.hacker.address, data: dataTransfer }));
+        await expectRevert.unspecified(web3.eth.sendTransaction({ from: hackerOwner, to: this.hacker.address, data: dataTransfer }));
     });
 
 });

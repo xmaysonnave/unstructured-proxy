@@ -1,8 +1,11 @@
 {
 	"folders": [
-		{
-			"path": "."
-		}
+        {
+            "path": "."
+        },
+        {
+            "path": "/work/solidity/fundraising"
+        }
     ],
     "settings": {
         "solidity.compileUsingRemoteVersion" : "0.5.7+commit.6da8b019",
