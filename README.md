@@ -24,7 +24,7 @@ See also the list of [contributors](https://github.com/xmaysonnave/unstructured-
 ## License
 <a name="license"/>
 
-This project is licensed under the [MIT License](https://spdx.org/licenses/MIT.html) from [SPDX](https://spdx.org/) License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the [MIT License](https://spdx.org/licenses/MIT.html) from [SPDX](https://spdx.org/) - see the [LICENSE](LICENSE) file for details
 
 
 ## Acknowledgments
